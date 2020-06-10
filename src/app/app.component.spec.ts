@@ -22,10 +22,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('ldpartmaker-web-app');
   });
 
-  it('should render title', () => {
+  it('should have a canvas', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('ldpartmaker-web-app app is running!');
+    expect(compiled.querySelector('canvas').textContent).toContain('Your browser does not support');
   });
 });
