@@ -1,5 +1,7 @@
 # LDPartMaker Web-Application
 
+![](https://github.com/nilsschmidt1337/ldpartmaker-web-app/workflows/Node.js%20CI/badge.svg?branch=master)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.7.
 
 ## Development server
