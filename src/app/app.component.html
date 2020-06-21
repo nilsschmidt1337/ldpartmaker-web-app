@@ -1,7 +1,15 @@
 
 <!-- The application is rendered inside of a single HTML5 canvas. -->
 
-<canvas id="multiframe" class="fill-browser-area">
+<canvas id="multiframe" class="fill-browser-area" *ngIf="hasNativeFS">
   <!-- Fallback page. In case of missing browser support. -->
   Your browser does <strong>not support</strong> the <code>&lt;canvas&gt;</code> element.
 </canvas>
+
+<div id="not-supported" *ngIf="!hasNativeFS">
+  The <a href="https://wicg.github.io/native-file-system/" target="_blank">Native File System API</a>
+  is <b>not</b>
+  supported in this browser yet. If you're running Chrome, you can enable the Native File System APIs by enabling the <code>#native-file-system-api</code>
+  flag in <code>chrome://flags</code>
+  .
+</div>
