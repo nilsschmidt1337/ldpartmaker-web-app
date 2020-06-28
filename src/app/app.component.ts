@@ -44,16 +44,16 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   async ngOnDestroy() {
     console.log("disposing resources..")
     try {
-      this?._canvas.dispose()
+      this._canvas?.dispose()
       console.log("canvas is disposed")
     } catch (e) {
       console.log(e)
       console.error("problem during canvas disposal")
     }
 
-    if ((this?._renderer as Renderer).initialized) {
+    if ((this._renderer as Renderer)?.initialized) {
       try {
-        (this?._renderer as Renderer).uninitialize()
+        (this._renderer as Renderer).uninitialize()
         console.log("renderer is uninitialized. It was done after the canvas disposal.")
       } catch (e) {
         console.log(e)
