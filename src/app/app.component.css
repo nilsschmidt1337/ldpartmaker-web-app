@@ -7,3 +7,30 @@
   top: 0;
   left: 0;
 }
+
+.error-window {
+  font-family: Roboto;
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  width: 30em
+}
+
+.error-image {
+  margin: 1.5em auto 0.5em auto;
+  width: 16em
+}
+
+.error-window h1 {
+  font-size: 140%;
+  margin-top: 2.5em;
+  margin-bottom: 0.5em;
+}
+
+.error-window p {
+  padding: 0.1em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}

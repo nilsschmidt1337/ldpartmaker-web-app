@@ -6,10 +6,36 @@
   Your browser does <strong>not support</strong> the <code>&lt;canvas&gt;</code> element.
 </canvas>
 
-<div id="not-supported" *ngIf="!hasNativeFS">
-  The <a href="https://wicg.github.io/native-file-system/" target="_blank">Native File System API</a>
-  is <b>not</b>
-  supported in this browser yet. If you're running Chrome, you can enable the Native File System APIs by enabling the <code>#native-file-system-api</code>
-  flag in <code>chrome://flags</code>
-  .
+<div id="not-supported" class="error-window" *ngIf="!hasNativeFS">
+
+  <h1 class="error-window.h1">
+    I'm sorry. That's an error.
+  </h1>
+
+  <p>
+    LDPartMaker can't access the LDraw&#8482; library on your computer.
+  </p>
+
+  <img src="assets/broken_brick_3002_alt.png" class="error-image">
+
+  <p>
+    The <a href="https://wicg.github.io/native-file-system/" target="_blank">Native File System API</a>
+    is <b>not</b> supported in this browser yet.
+  </p>
+
+  <p>
+   If you're running Chrome, you can enable the Native File System APIs by enabling the
+  </p>
+
+  <p>
+    <code>#native-file-system-api</code>
+  </p>
+
+  <p>
+   flag in
+  </p>
+
+  <p>
+    <code>chrome://flags</code>
+  </p>
 </div>
