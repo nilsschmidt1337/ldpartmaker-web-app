@@ -14,7 +14,10 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run `ng build --prod --base-href ./` for a production build.
+You can open the production build artifact by simply opening `./dist/ldpartmaker-web-app/index.html` in your browser.
+It does not require a server to run on the localhost environment.
 
 ## Running unit tests
 
