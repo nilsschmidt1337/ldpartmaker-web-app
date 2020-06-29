@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Canvas, Renderer, Wizard} from "webgl-operate";
-import {AppRenderer} from "./app.renderer";
+import {AppRenderer} from "./app-renderer";
 
 @Component({
   selector: 'app-root',
