@@ -1,10 +1,10 @@
-import {Context, EventProvider, Invalidate, Renderer} from "webgl-operate";
+import {Context, EventProvider, Invalidate, Renderer} from 'webgl-operate';
 
 export class AppRenderer extends Renderer {
 
   uninitialize() {
     super.uninitialize();
-    console.log("uninitialized resources of the AppRenderer")
+    console.log('uninitialized resources of the AppRenderer');
   }
 
   protected onDiscarded(): void {
@@ -21,7 +21,7 @@ export class AppRenderer extends Renderer {
   }
 
   protected onUninitialize(): void {
-    console.log("renderer is uninitialized")
+    console.log('renderer is uninitialized');
   }
 
   protected onUpdate(): boolean {

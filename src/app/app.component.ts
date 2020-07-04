@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {Canvas, Renderer, Wizard} from "webgl-operate";
-import {AppRenderer} from "./app-renderer";
+import {Canvas, Renderer, Wizard} from 'webgl-operate';
+import {AppRenderer} from './app-renderer';
 import {name, version} from '../../package.json';
 
 @Component({
@@ -11,16 +11,18 @@ import {name, version} from '../../package.json';
 export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
   title = 'ldpartmaker-web-app';
-  hasNativeFS = window["chooseFileSystemEntries"];
 
-  private _canvas: Canvas;
-  private _renderer: AppRenderer;
+  // tslint:disable-next-line
+  hasNativeFS = window['chooseFileSystemEntries'];
+
+  private canvas: Canvas;
+  private renderer: AppRenderer;
 
   /**
    * Create the AppComponent and display the name and version of this program
    */
   constructor() {
-    console.log("started " + name + " version " + version)
+    console.log('started ' + name + ' version ' + version);
   }
 
   /**
@@ -29,7 +31,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
    * (e.g. the availability of the Native File System API).
    */
   ngOnInit() {
-    console.log("hasNativeFS is " + this.hasNativeFS)
+    console.log('hasNativeFS is ' + this.hasNativeFS);
   }
 
   /**
@@ -38,11 +40,11 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
    * then delegates the creation of the renderer.
    */
   ngAfterViewInit() {
-    let htmlCanvasElement = <HTMLCanvasElement>document.getElementById("multiframe")
-    console.log("canvas is " + htmlCanvasElement)
+    const htmlCanvasElement = document.getElementById('multiframe') as HTMLCanvasElement;
+    console.log('canvas is ' + htmlCanvasElement);
 
     if (htmlCanvasElement != null) {
-      this.onInitialize(htmlCanvasElement)
+      this.onInitialize(htmlCanvasElement);
     }
   }
 
@@ -57,25 +59,25 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   @HostListener('window:beforeunload')
   async ngOnDestroy() {
 
-    console.log("disposing resources..")
+    console.log('disposing resources..');
 
-    if (this._canvas != null) {
+    if (this.canvas != null) {
       try {
-        this._canvas.dispose()
-        console.log("canvas is disposed")
+        this.canvas.dispose();
+        console.log('canvas is disposed');
       } catch (e) {
-        console.log(e)
-        console.error("problem during canvas disposal")
+        console.log(e);
+        console.error('problem during canvas disposal');
       }
     }
 
-    if ((this._renderer as Renderer)?.initialized) {
+    if ((this.renderer as Renderer)?.initialized) {
       try {
-        (this._renderer as Renderer).uninitialize()
-        console.log("renderer is uninitialized. It was done after the canvas disposal.")
+        (this.renderer as Renderer).uninitialize();
+        console.log('renderer is uninitialized. It was done after the canvas disposal.');
       } catch (e) {
-        console.log(e)
-        console.error("problem during renderer disposal")
+        console.log(e);
+        console.error('problem during renderer disposal');
       }
     }
   }
@@ -88,12 +90,12 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
    */
   onInitialize(element: HTMLCanvasElement | string) {
 
-    this._canvas = new Canvas(element, {antialias: true});
-    this._canvas.controller.multiFrameNumber = 1;
-    this._canvas.framePrecision = Wizard.Precision.byte;
-    this._canvas.frameScale = [1.0, 1.0];
+    this.canvas = new Canvas(element, {antialias: true});
+    this.canvas.controller.multiFrameNumber = 1;
+    this.canvas.framePrecision = Wizard.Precision.byte;
+    this.canvas.frameScale = [1.0, 1.0];
 
-    this._renderer = new AppRenderer();
-    this._canvas.renderer = this._renderer;
+    this.renderer = new AppRenderer();
+    this.canvas.renderer = this.renderer;
   }
 }
