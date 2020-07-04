@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Canvas, Renderer, Wizard} from "webgl-operate";
 import {AppRenderer} from "./app-renderer";
+import {name, version} from '../../package.json';
 
 @Component({
   selector: 'app-root',
@@ -15,14 +16,27 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   private _canvas: Canvas;
   private _renderer: AppRenderer;
 
+  /**
+   * Create the AppComponent and display the name and version of this program
+   */
   constructor() {
+    console.log("started " + name + " version " + version)
   }
 
+  /**
+   * This is invoked with first priority, but only once on instantiation.
+   * It displays some information about the browser and system environment
+   * (e.g. the availability of the Native File System API).
+   */
   ngOnInit() {
-    console.log("Hello LDraw World!")
     console.log("hasNativeFS is " + this.hasNativeFS)
   }
 
+  /**
+   * This is triggered after the component view initialization is complete.
+   * It retrieves the canvas element from the DOM and
+   * then delegates the creation of the renderer.
+   */
   ngAfterViewInit() {
     let htmlCanvasElement = <HTMLCanvasElement>document.getElementById("multiframe")
     console.log("canvas is " + htmlCanvasElement)
@@ -34,7 +48,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
   /**
    * The ngOnDestroy method is called both when the component is destroyed by Angular
-   * AND when the browser event window:beforeunload is fired
+   * AND when the browser event window:beforeunload is fired.
    * (*) Page Refresh
    * (*) Tab Close
    * (*) Browser Close
@@ -42,13 +56,17 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
    */
   @HostListener('window:beforeunload')
   async ngOnDestroy() {
+
     console.log("disposing resources..")
-    try {
-      this._canvas?.dispose()
-      console.log("canvas is disposed")
-    } catch (e) {
-      console.log(e)
-      console.error("problem during canvas disposal")
+
+    if (this._canvas != null) {
+      try {
+        this._canvas.dispose()
+        console.log("canvas is disposed")
+      } catch (e) {
+        console.log(e)
+        console.error("problem during canvas disposal")
+      }
     }
 
     if ((this._renderer as Renderer)?.initialized) {
@@ -62,6 +80,12 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Initializes the canvas and connects a new renderer instance to
+   * the renderer.
+   *
+   * @param element the canvas element from the DOM
+   */
   onInitialize(element: HTMLCanvasElement | string) {
 
     this._canvas = new Canvas(element, {antialias: true});
