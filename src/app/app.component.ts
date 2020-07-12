@@ -2,6 +2,8 @@ import {AfterViewInit, Component, HostListener, OnDestroy, OnInit} from '@angula
 import {Canvas, Renderer, Wizard} from 'webgl-operate';
 import {AppRenderer} from './app-renderer';
 import {name, version} from '../../package.json';
+import {NativeFileSystem} from './native-file-system-api/native-file-system';
+import {FileSystemEntriesOptions, ChooseFileSystemEntriesType} from './native-file-system-api/file-system-entries-options';
 
 @Component({
   selector: 'app-root',
@@ -97,5 +99,15 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     this.renderer = new AppRenderer();
     this.canvas.renderer = this.renderer;
+  }
+
+  async onClick() {
+    const opts = new FileSystemEntriesOptions();
+    opts.type = ChooseFileSystemEntriesType.openFile;
+    // opts.type = ChooseFileSystemEntriesType.openDirectory;
+    const fileHandle = await NativeFileSystem.chooseFileSystemEntries(opts);
+    const f = await fileHandle.getFile();
+    console.log(f.name);
+    // Do something with the file handle
   }
 }
