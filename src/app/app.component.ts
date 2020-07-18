@@ -16,6 +16,8 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
   // tslint:disable-next-line
   hasNativeFS = window['chooseFileSystemEntries'];
+  hasWebGL2Support = false;
+  hasWebWorkerSupport = typeof Worker !== undefined;
 
   private canvas: Canvas;
   private renderer: WebGLRenderer;
@@ -33,7 +35,8 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
    * (e.g. the availability of the Native File System API).
    */
   ngOnInit() {
-    console.log('hasNativeFS is ' + this.hasNativeFS);
+    console.log('Native File System support : ' + this.hasNativeFS);
+    console.log('Web Worker multithreading  : ' + this.hasWebWorkerSupport);
   }
 
   /**
@@ -43,7 +46,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
    */
   ngAfterViewInit() {
     const htmlCanvasElement = document.getElementById('multiframe') as HTMLCanvasElement;
-    console.log('canvas is ' + htmlCanvasElement);
+    console.log('HTML <canvas> support      : ' + htmlCanvasElement);
 
     if (htmlCanvasElement != null) {
       this.onInitialize(htmlCanvasElement);
@@ -96,9 +99,18 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     this.canvas.controller.multiFrameNumber = 1;
     this.canvas.framePrecision = Wizard.Precision.byte;
     this.canvas.frameScale = [1.0, 1.0];
+    this.hasWebGL2Support = this.canvas.context.isWebGL2;
+    console.log('WebGL 2 capable browser    : ' + this.hasWebGL2Support);
 
-    this.renderer = new WebGLRenderer();
-    this.canvas.renderer = this.renderer;
+    if (this.hasWebGL2Support) {
+      this.renderer = new WebGLRenderer();
+      this.canvas.renderer = this.renderer;
+    } else {
+      // Show the error div and hide the canvas
+      const divElement = document.getElementById('webgl2-not-supported') as HTMLDivElement;
+      divElement.hidden = false;
+      this.canvas.element.hidden = true;
+    }
   }
 
   async onClick() {

@@ -1,12 +1,14 @@
 
 <!-- The application is rendered inside of a single HTML5 canvas. -->
 
-<canvas id="multiframe" class="fill-browser-area" *ngIf="hasNativeFS" (click)="onClick()">
+<canvas id="multiframe" class="fill-browser-area"
+        *ngIf="hasWebWorkerSupport && hasNativeFS"
+        (click)="onClick()">
   <!-- Fallback page. In case of missing browser support. -->
   Your browser does <strong>not support</strong> the <code>&lt;canvas&gt;</code> element.
 </canvas>
 
-<div id="not-supported" class="error-window" *ngIf="!hasNativeFS">
+<div id="nfs-api-not-supported" class="error-window" *ngIf="!hasNativeFS">
 
   <h1 class="error-window.h1">
     I'm sorry. That's an error.
@@ -37,5 +39,41 @@
 
   <p>
     <code>chrome://flags</code>
+  </p>
+</div>
+
+<div id="web-worker-api-not-supported" class="error-window" *ngIf="!hasWebWorkerSupport && hasNativeFS">
+
+  <h1 class="error-window.h1">
+    I'm sorry. That's unfortunate.
+  </h1>
+
+  <p>
+    LDPartMaker requires a browser which supports parallel background tasks (Web Workers).
+  </p>
+
+  <img src="assets/broken_brick_3002_alt.png" class="error-image">
+
+  <p>
+    The <a href="https://www.w3schools.com/HTML/html5_webworkers.asp" target="_blank">Web Workers API</a>
+    is <b>not</b> supported in this browser yet.
+  </p>
+</div>
+
+<div id="webgl2-not-supported" class="error-window" *ngIf="hasNativeFS && hasWebWorkerSupport" [hidden]="true">
+
+  <h1 class="error-window.h1">
+    I apologize. This is a problem.
+  </h1>
+
+  <p>
+    LDPartMaker requires a browser which can draw bricks with the power of WebGL 2.
+  </p>
+
+  <img src="assets/broken_brick_3002_alt.png" class="error-image">
+
+  <p>
+    The <a href="https://get.webgl.org/webgl2/" target="_blank">WebGL 2 API</a>
+    is <b>not</b> supported in this browser yet.
   </p>
 </div>

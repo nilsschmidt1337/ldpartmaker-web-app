@@ -34,6 +34,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('#not-supported').textContent).toContain('Native File System API');
+    expect(compiled.querySelector('#nfs-api-not-supported').textContent).toContain('Native File System API');
   });
 });
