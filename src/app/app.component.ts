@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Canvas, Renderer, Wizard} from 'webgl-operate';
-import {WebglRenderer} from './webgl-renderer/webgl-renderer';
+import {WebGLRenderer} from './webgl-renderer/webgl-renderer';
 import {name, version} from '../../package.json';
 import {NativeFileSystem} from './native-file-system-api/native-file-system';
 import {FileSystemEntriesOptions, ChooseFileSystemEntriesType} from './native-file-system-api/file-system-entries-options';
@@ -18,7 +18,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   hasNativeFS = window['chooseFileSystemEntries'];
 
   private canvas: Canvas;
-  private renderer: WebglRenderer;
+  private renderer: WebGLRenderer;
 
   /**
    * Create the AppComponent and display the name and version of this program
@@ -97,7 +97,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     this.canvas.framePrecision = Wizard.Precision.byte;
     this.canvas.frameScale = [1.0, 1.0];
 
-    this.renderer = new WebglRenderer();
+    this.renderer = new WebGLRenderer();
     this.canvas.renderer = this.renderer;
   }
 

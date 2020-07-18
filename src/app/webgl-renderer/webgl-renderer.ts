@@ -1,7 +1,7 @@
 import {Context, EventProvider, Invalidate, Renderer} from 'webgl-operate';
-import {Webgl2ShaderProgramFactory} from '../shader/webgl2-shader-program-factory';
+import {WebGL2ShaderProgramFactory} from '../shader/webgl2-shader-program-factory';
 
-export class WebglRenderer extends Renderer {
+export class WebGLRenderer extends Renderer {
 
   private vertexShaderSource = `#version 300 es
 
@@ -44,7 +44,7 @@ void main() {
 
   uninitialize() {
     super.uninitialize();
-    console.log('uninitialized resources of the WebglRenderer');
+    console.log('uninitialized resources of the WebGLRenderer');
   }
 
   protected onDiscarded(): void {
@@ -55,7 +55,7 @@ void main() {
 
     // Use our boilerplate utils to compile the shaders and link into a program
 
-    const program = Webgl2ShaderProgramFactory.createProgramFromSources(gl,
+    const program = WebGL2ShaderProgramFactory.createProgramFromSources(gl,
       this.vertexShaderSource, this.fragmentShaderSource);
 
     // look up where the vertex data needs to go.

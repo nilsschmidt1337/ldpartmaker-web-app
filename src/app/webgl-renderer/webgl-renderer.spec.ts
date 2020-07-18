@@ -1,7 +1,7 @@
-import {WebglRenderer} from './webgl-renderer';
+import {WebGLRenderer} from './webgl-renderer';
 
-describe('WebglRenderer', () => {
+describe('WebGLRenderer', () => {
   it('should create an instance', () => {
-    expect(new WebglRenderer()).toBeTruthy();
+    expect(new WebGLRenderer()).toBeTruthy();
   });
 });

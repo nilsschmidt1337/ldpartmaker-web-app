@@ -1,7 +1,7 @@
 /**
- * The <b>Webgl2ShaderProgramFactory</b> creates shader instances and compiles shader programs.
+ * The <b>WebGL2ShaderProgramFactory</b> creates shader instances and compiles shader programs.
  */
-export class Webgl2ShaderProgramFactory {
+export class WebGL2ShaderProgramFactory {
 
   /**
    * Creates a shader program from a pair of shader source strings (vertex and fragment shader)
