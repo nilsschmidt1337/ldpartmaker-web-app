@@ -1,4 +1,5 @@
 import {Context, EventProvider, Invalidate, Renderer} from 'webgl-operate';
+import {Webgl2ShaderProgramFactory} from '../shader/webgl2-shader-program-factory';
 
 export class WebglRenderer extends Renderer {
 
@@ -54,7 +55,7 @@ void main() {
 
     // Use our boilerplate utils to compile the shaders and link into a program
 
-    const program = this.createProgramFromSources(gl,
+    const program = Webgl2ShaderProgramFactory.createProgramFromSources(gl,
       this.vertexShaderSource, this.fragmentShaderSource);
 
     // look up where the vertex data needs to go.
@@ -161,37 +162,5 @@ void main() {
       x2, y1,
       x2, y2,
     ]), gl.STATIC_DRAW);
-  }
-
-  private createProgramFromSources(gl: WebGL2RenderingContext, vertexShaderSource: string, fragmentShaderSource: string): WebGLShader {
-    const program = gl.createProgram();
-
-    const vertexShader = this.createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
-    const fragmentShader = this.createShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
-
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    const success = gl.getProgramParameter(program, gl.LINK_STATUS);
-    if (success) {
-      return program;
-    }
-
-    console.log(gl.getProgramInfoLog(program));
-    gl.deleteProgram(program);
-  }
-
-  private createShader(gl: WebGL2RenderingContext, sourceCode: string, type : GLenum): WebGLShader {
-    // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, sourceCode);
-    gl.compileShader(shader);
-
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      const info = gl.getShaderInfoLog(shader);
-      throw new Error('Could not compile WebGL program. \n\n' + info);
-    }
-
-    return shader;
   }
 }
