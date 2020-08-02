@@ -1,18 +1,17 @@
-
-  <div class="resize-container"
-       ngResizable
-       rzHandles="n,s,e,w,se,sw"
-       ngDraggable
-       [handle]="dragHandle"
-       [bounds]=bounds
-       [inBounds]="true"
-       [preventDefaultEvent]="true">
-    <div #dragHandle class="drag-handle">
-      Draggable & Resizable
-    </div>
-    <textarea width="100%" class="content">
-      0 // First comment line
-      0 // a triangle
-      3 16 0 0 0 5 4 0 5 0 0
-    </textarea>
+<div [bounds]=bounds
+     [handle]="dragHandle"
+     [inBounds]="true"
+     [preventDefaultEvent]="true"
+     class="resize-container"
+     ngDraggable
+     ngResizable
+     rzHandles="n,s,e,w,se,sw">
+  <div #dragHandle class="drag-handle">
+    Draggable & Resizable
   </div>
+  <textarea class="content">
+    0 // First comment line
+    0 // a triangle
+    3 16 0 0 0 5 4 0 5 0 0
+  </textarea>
+</div>
