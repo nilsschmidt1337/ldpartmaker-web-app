@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-text-editor',
@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./text-editor.component.css']
 })
 export class TextEditorComponent implements OnInit {
+  @Input() bounds: HTMLDivElement;
 
   constructor() { }
 

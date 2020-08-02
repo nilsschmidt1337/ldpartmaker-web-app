@@ -78,4 +78,7 @@
   </p>
 </div>
 
-<app-text-editor></app-text-editor>
+<div class="drag-bounds" #dragBounds>
+  <app-text-editor [bounds]="dragBounds"></app-text-editor>
+  <app-text-editor [bounds]="dragBounds"></app-text-editor>
+</div>

@@ -8,6 +8,14 @@
   left: 0;
 }
 
+.drag-bounds {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .error-window {
   font-family: Roboto;
   margin-left: auto;

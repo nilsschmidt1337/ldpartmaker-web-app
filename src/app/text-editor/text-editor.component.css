@@ -1,11 +1,3 @@
-.drag-bounds {
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
 .resize-container {
   font-family: Roboto;
   width: 300px;
