@@ -1,0 +1,36 @@
+.drag-bounds {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.resize-container {
+  font-family: Roboto;
+  width: 300px;
+  height: 300px;
+}
+
+.resize-container {
+  position: relative;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 0;
+  right: 35px;
+  height: 2em;
+  background: #cccccc;
+  z-index: 8;
+  padding: 0.25em;
+  text-align: right;
+}
+
+.content {
+  font-family: "Roboto Mono";
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+}

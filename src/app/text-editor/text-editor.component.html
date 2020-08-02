@@ -1,0 +1,19 @@
+<div class="drag-bounds" #dragBounds>
+  <div class="resize-container"
+       ngResizable
+       rzHandles="n,s,e,w,se,sw"
+       ngDraggable
+       [handle]="dragHandle"
+       [bounds]="dragBounds"
+       [inBounds]="true"
+       [preventDefaultEvent]="true">
+    <div #dragHandle class="drag-handle">
+      Draggable & Resizable
+    </div>
+    <textarea width="100%" class="content">
+      0 // First comment line
+      0 // a triangle
+      3 16 0 0 0 5 4 0 5 0 0
+    </textarea>
+  </div>
+</div>
