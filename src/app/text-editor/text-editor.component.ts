@@ -6,11 +6,29 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./text-editor.component.css']
 })
 export class TextEditorComponent implements OnInit {
-  @Input() bounds: HTMLDivElement;
+  static maxZIndex = 999;
 
-  constructor() { }
+  @Input() bounds: HTMLDivElement;
+  internalZIndex = 100;
+
+  constructor() {
+  }
 
   ngOnInit(): void {
   }
 
+  async onClick() {
+    this.internalZIndex = this.calculateZIndex();
+    console.log('calculated new z-index ' + this.internalZIndex);
+  }
+
+  calculateZIndex() {
+    TextEditorComponent.maxZIndex += 1;
+    return TextEditorComponent.maxZIndex;
+  }
+
+  assignZIndex() {
+    console.log('assigned z-index ' + this.internalZIndex);
+    return this.internalZIndex;
+  }
 }

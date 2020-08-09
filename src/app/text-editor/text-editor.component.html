@@ -1,7 +1,10 @@
-<div [bounds]=bounds
+<div (click)="onClick()"
+     [bounds]=bounds
      [handle]="dragHandle"
      [inBounds]="true"
      [preventDefaultEvent]="true"
+     [zIndexMoving]="999999"
+     [zIndex]="assignZIndex()"
      class="resize-container"
      ngDraggable
      ngResizable
@@ -10,8 +13,9 @@
     Draggable & Resizable
   </div>
   <textarea class="content">
-    0 // First comment line
-    0 // a triangle
-    3 16 0 0 0 5 4 0 5 0 0
+
+ 0 // First comment line
+ 0 // a triangle
+ 3 16 0 0 0 5 4 0 5 0 0
   </textarea>
 </div>
