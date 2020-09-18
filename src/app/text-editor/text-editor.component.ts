@@ -3,13 +3,14 @@ import {Component, Input, OnInit} from '@angular/core';
 @Component({
   selector: 'app-text-editor',
   templateUrl: './text-editor.component.html',
-  styleUrls: ['./text-editor.component.css']
+  styleUrls: ['./text-editor.component.css'],
 })
 export class TextEditorComponent implements OnInit {
   static maxZIndex = 999;
 
   @Input() bounds: HTMLDivElement;
   internalZIndex = 100;
+  shown = true;
 
   constructor() {
   }
@@ -30,5 +31,9 @@ export class TextEditorComponent implements OnInit {
   assignZIndex() {
     console.log('assigned z-index ' + this.internalZIndex);
     return this.internalZIndex;
+  }
+
+  onMousewheel() {
+    this.shown = false;
   }
 }

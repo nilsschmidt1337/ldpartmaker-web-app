@@ -1,4 +1,5 @@
 <div (click)="onClick()"
+     *ngIf="shown"
      [bounds]=bounds
      [handle]="dragHandle"
      [inBounds]="true"
@@ -9,7 +10,7 @@
      ngDraggable
      ngResizable
      rzHandles="n,s,e,w,se,sw">
-  <div #dragHandle class="drag-handle">
+  <div #dragHandle class="drag-handle" (mousewheel)="onMousewheel()">
     Draggable & Resizable
   </div>
   <textarea class="content">
