@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {Canvas, Renderer, Wizard} from 'webgl-operate';
 import {WebGLRenderer} from './webgl-renderer/webgl-renderer';
 import {name, version} from '../../package.json';
@@ -12,6 +12,8 @@ import {FileSystemEntriesOptions, ChooseFileSystemEntriesType} from './native-fi
 })
 export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
+  @ViewChild('dragBounds', {read: ViewContainerRef}) viewContainerRef: ViewContainerRef;
+
   title = 'ldpartmaker-web-app';
 
   // tslint:disable-next-line
@@ -22,11 +24,14 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   private canvas: Canvas;
   private renderer: WebGLRenderer;
 
+  public myself: AppComponent;
+
   /**
    * Create the AppComponent and display the name and version of this program
    */
   constructor() {
     console.log('started ' + name + ' version ' + version);
+    this.myself = this;
   }
 
   /**

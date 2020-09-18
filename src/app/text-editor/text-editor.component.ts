@@ -1,4 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ComponentFactoryResolver, Host, Input, OnInit} from '@angular/core';
+import {AppComponent} from '../app.component';
 
 @Component({
   selector: 'app-text-editor',
@@ -9,11 +10,12 @@ export class TextEditorComponent implements OnInit {
   static maxZIndex = 999;
 
   @Input() bounds: HTMLDivElement;
+  @Input() parentComponent: AppComponent;
+
   internalZIndex = 100;
   shown = true;
 
-  constructor() {
-  }
+  constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
   ngOnInit(): void {
   }
@@ -35,5 +37,11 @@ export class TextEditorComponent implements OnInit {
 
   onMousewheel() {
     this.shown = false;
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(TextEditorComponent);
+    this.parentComponent.viewContainerRef.clear();
+    const newComponent = this.parentComponent.viewContainerRef.createComponent(componentFactory, 0);
+    newComponent.instance.parentComponent = this.parentComponent;
+    newComponent.instance.bounds = this.bounds;
+    newComponent.instance.shown = true;
   }
 }
