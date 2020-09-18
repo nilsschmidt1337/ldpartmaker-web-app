@@ -38,8 +38,7 @@ export class TextEditorComponent implements OnInit {
   onMousewheel() {
     this.shown = false;
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(TextEditorComponent);
-    this.parentComponent.viewContainerRef.clear();
-    const newComponent = this.parentComponent.viewContainerRef.createComponent(componentFactory, 0);
+    const newComponent = this.parentComponent.viewContainerRef.createComponent(componentFactory);
     newComponent.instance.parentComponent = this.parentComponent;
     newComponent.instance.bounds = this.bounds;
     newComponent.instance.shown = true;
