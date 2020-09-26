@@ -44,4 +44,17 @@ export class TextEditorComponent implements OnInit {
     newComponent.instance.bounds = this.bounds;
     newComponent.instance.shown = true;
   }
+
+  onInputEvent(event: any) {
+    const ie = event as InputEvent;
+    console.log('data: ' + ie.data);
+    console.log('inputType: ' + ie.inputType);
+    console.log('detail: ' + ie.detail);
+    console.log('type: ' + ie.type);
+    console.log(this.source);
+    console.log('documentPosition ' + getSelection().anchorNode);
+    console.log('anchorOffset: ' + getSelection().anchorOffset);
+    console.log(event.target.innerHTML);
+    console.log(event.target.innerText);
+  }
 }
