@@ -14,7 +14,10 @@ export class TextEditorComponent implements OnInit {
 
   internalZIndex = 100;
   shown = true;
-  source = '<br>0 // First comment line<br>0 // a triangle<br>3 <b>16</b> 0 0 0 5 4 0 5 0 0';
+  source = '<div class="line"></div>' +
+    '<div class="line">0 // First comment line</div>' +
+    '<div class="line">0 // a triangle</div>' +
+    '<div class="line">3 <b>16</b> 0 0 0 5 4 0 5 0 0</div>';
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
@@ -52,9 +55,49 @@ export class TextEditorComponent implements OnInit {
     console.log('detail: ' + ie.detail);
     console.log('type: ' + ie.type);
     console.log(this.source);
-    console.log('documentPosition ' + getSelection().anchorNode);
-    console.log('anchorOffset: ' + getSelection().anchorOffset);
+    console.log('lineNumber: ' + this.lineNumber(getSelection().anchorNode));
+    console.log('lineOffset: ' + (getSelection().anchorOffset + this.lineOffset(getSelection().anchorNode)));
     console.log(event.target.innerHTML);
     console.log(event.target.innerText);
+  }
+
+  lineNumber(node: Node) {
+    const parentNode = node.parentNode;
+    let lineNumber = 0;
+    if (!(parentNode instanceof HTMLDivElement && (parentNode as HTMLDivElement).className === 'content')) {
+      return this.lineNumber(parentNode);
+    } else {
+      let foundOriginalNode = false;
+      parentNode.childNodes.forEach(child => {
+        if (child === node) {
+          foundOriginalNode = true;
+        }
+        if (!foundOriginalNode) {
+          lineNumber++;
+        }
+      });
+      return lineNumber;
+    }
+  }
+
+  lineOffset(node: Node): number {
+    const parentNode = node.parentNode;
+    if (parentNode instanceof HTMLDivElement && (parentNode as HTMLDivElement).className === 'content') {
+      return 0;
+    }
+    let offset = 0;
+    let foundOriginalNode = false;
+    parentNode.childNodes.forEach(child => {
+      if (child === node) {
+        foundOriginalNode = true;
+      }
+      if (!foundOriginalNode) {
+        offset += child.nodeValue?.length || 0;
+      }
+    });
+    if (!(parentNode instanceof HTMLDivElement && (parentNode as HTMLDivElement).className === 'line')) {
+      offset += this.lineOffset(parentNode);
+    }
+    return offset;
   }
 }

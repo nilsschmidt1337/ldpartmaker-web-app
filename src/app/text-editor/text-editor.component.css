@@ -28,4 +28,5 @@
   left: 0;
   resize: none;
   flex: 1;
+  overflow-y: scroll;
 }
