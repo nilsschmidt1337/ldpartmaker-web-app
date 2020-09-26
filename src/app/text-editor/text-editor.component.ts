@@ -14,6 +14,7 @@ export class TextEditorComponent implements OnInit {
 
   internalZIndex = 100;
   shown = true;
+  source = '<br>0 // First comment line<br>0 // a triangle<br>3 <b>16</b> 0 0 0 5 4 0 5 0 0';
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
