@@ -10,9 +10,17 @@
      ngDraggable
      ngResizable
      rzHandles="n,s,e,w,se,sw">
-  <div #dragHandle class="drag-handle" (mousewheel)="onMousewheel()">
+  <div #dragHandle class="drag-handle">
     Draggable & Resizable
   </div>
+
+  <button mat-stroked-button color="primary" (click)="onClose()">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <mat-slider min="1" max="100" step="1" value="1"></mat-slider>
+
+
   <textarea class="content">
 
  0 // First comment line

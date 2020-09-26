@@ -1,4 +1,4 @@
-import {Component, ComponentFactoryResolver, Host, Input, OnInit} from '@angular/core';
+import {Component, ComponentFactoryResolver, Input, OnInit} from '@angular/core';
 import {AppComponent} from '../app.component';
 
 @Component({
@@ -35,7 +35,7 @@ export class TextEditorComponent implements OnInit {
     return this.internalZIndex;
   }
 
-  onMousewheel() {
+  onClose() {
     this.shown = false;
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(TextEditorComponent);
     const newComponent = this.parentComponent.viewContainerRef.createComponent(componentFactory);

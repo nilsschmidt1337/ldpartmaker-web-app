@@ -78,7 +78,8 @@
   </p>
 </div>
 
-<div class="drag-bounds" #dragBounds>
+<div class="drag-bounds" #dragBounds
+     *ngIf="hasWebWorkerSupport && hasNativeFS">
   <app-text-editor [bounds]="dragBounds" [parentComponent]="myself"></app-text-editor>
   <app-text-editor [bounds]="dragBounds" [parentComponent]="myself"></app-text-editor>
   <app-text-editor [bounds]="dragBounds" [parentComponent]="myself"></app-text-editor>

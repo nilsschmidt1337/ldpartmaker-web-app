@@ -95,3 +95,37 @@ h1, h2, h3, h4, h5, h6
   url('assets/fonts/roboto-mono-v11-latin-italic.ttf') format('truetype'), /* Safari, Android, iOS */
   url('assets/fonts/roboto-mono-v11-latin-italic.svg#RobotoMono') format('svg'); /* Legacy iOS */
 }
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'),
+  local('MaterialIcons-Regular'),
+  url(assets/fonts/MaterialIcons-Regular.ttf) format('truetype');  /* Safari, Android, iOS */
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
