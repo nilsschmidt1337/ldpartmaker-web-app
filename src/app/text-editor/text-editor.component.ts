@@ -18,6 +18,7 @@ export class TextEditorComponent implements OnInit {
     '<div class="line">0 // First comment line</div>' +
     '<div class="line">0 // a triangle</div>' +
     '<div class="line">3 <b>16</b> 0 0 0 5 4 0 5 0 0</div>';
+  caretPos = '1:1';
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
@@ -55,10 +56,17 @@ export class TextEditorComponent implements OnInit {
     console.log('detail: ' + ie.detail);
     console.log('type: ' + ie.type);
     console.log(this.source);
-    console.log('lineNumber: ' + this.lineNumber(getSelection().anchorNode));
-    console.log('lineOffset: ' + (getSelection().anchorOffset + this.lineOffset(getSelection().anchorNode)));
+    this.updateCaretPos();
     console.log(event.target.innerHTML);
     console.log(event.target.innerText);
+  }
+
+  updateCaretPos() {
+    const lineNumber = this.lineNumber(getSelection().anchorNode);
+    const offset = (getSelection().anchorOffset + this.lineOffset(getSelection().anchorNode));
+    this.caretPos = lineNumber + ':' + offset;
+    console.log('lineNumber: ' + lineNumber);
+    console.log('lineOffset: ' + offset);
   }
 
   lineNumber(node: Node) {
@@ -83,7 +91,7 @@ export class TextEditorComponent implements OnInit {
   lineOffset(node: Node): number {
     const parentNode = node.parentNode;
     if (parentNode instanceof HTMLDivElement && (parentNode as HTMLDivElement).className === 'content') {
-      return 0;
+      return 1;
     }
     let offset = 0;
     let foundOriginalNode = false;
@@ -97,6 +105,8 @@ export class TextEditorComponent implements OnInit {
     });
     if (!(parentNode instanceof HTMLDivElement && (parentNode as HTMLDivElement).className === 'line')) {
       offset += this.lineOffset(parentNode);
+    } else {
+      offset++;
     }
     return offset;
   }
