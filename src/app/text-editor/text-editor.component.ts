@@ -1,6 +1,5 @@
 import {Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {AppComponent} from '../app.component';
-import {FocusOptions} from "@angular/cdk/a11y/focus-monitor/focus-monitor";
 
 @Component({
   selector: 'app-text-editor',
@@ -26,6 +25,7 @@ export class TextEditorComponent implements OnInit {
   caretPos = '1:1';
   private lineNumber: number;
   private lineOffset: number;
+  private nodeFound = false;
   @ViewChild('sourceEditor', {read: ViewContainerRef}) viewContainerRef: ViewContainerRef;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
@@ -72,8 +72,10 @@ export class TextEditorComponent implements OnInit {
   }
 
   updateCaretPos() {
+    const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
+    this.nodeFound = false;
     this.lineNumber = this.calculateLineNumber(getSelection().anchorNode);
-    this.lineOffset = (getSelection().anchorOffset + this.calculateLineOffset(getSelection().anchorNode));
+    this.lineOffset = (getSelection().anchorOffset + this.calculateLineOffset(getSelection().anchorNode, div));
     this.caretPos = this.lineNumber + ':' + this.lineOffset;
     console.log('lineNumber: ' + this.lineNumber);
     console.log('lineOffset: ' + this.lineOffset);
@@ -82,7 +84,9 @@ export class TextEditorComponent implements OnInit {
   restoreCaretPos(lineNumber: number, lineOffset: number) {
     const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
     // TODO: Parse here
-    div.innerHTML = this.original;
+    if (lineNumber % 2 === 0) {
+      div.innerHTML = this.original;
+    }
 
     function min(num1: number, num2: number) {
       if (num1 < num2) {
@@ -92,11 +96,13 @@ export class TextEditorComponent implements OnInit {
     }
     let lineNode = div.childNodes.item(min(lineNumber, div.childNodes.length));
     let nodeNotFound = true;
+    let lastNodeLength = 0;
     function consumeOffset(node: Node) {
       if (nodeNotFound && node instanceof Text) {
-        if (lineOffset >= node.length) {
+        if (lineOffset > node.length) {
           lineOffset -= node.length;
           lineNode = node;
+          lastNodeLength = node.length;
           console.log('[in progress] text:' + node.wholeText + ' offset:' + lineOffset);
         } else if (nodeNotFound) {
           lineOffset--;
@@ -117,6 +123,9 @@ export class TextEditorComponent implements OnInit {
       lineNode.childNodes.forEach(node => {
         consumeOffset(node);
       });
+      if (nodeNotFound) {
+        lineOffset += lastNodeLength - 1;
+      }
     } else {
       lineNode = lineNode.childNodes.item(0);
       lineOffset--;
@@ -151,29 +160,28 @@ export class TextEditorComponent implements OnInit {
     }
   }
 
-  calculateLineOffset(node: Node): number {
-    const parentNode = node.parentNode;
-    if (parentNode === null) {
+  calculateLineOffset(nodeToFind: Node, nodeToProcess: Node): number {
+    // Quit when the node was found
+    if (this.nodeFound) {
       return 0;
     }
-    if (parentNode instanceof HTMLDivElement && (parentNode as HTMLDivElement).className === 'content') {
-      return 1;
+    // Dive into the current line
+    if (nodeToProcess instanceof HTMLDivElement && (nodeToProcess as HTMLDivElement).className === 'content') {
+      console.log('dive into line ' + this.lineNumber + ' to find ' + nodeToFind.textContent);
+      this.lineOffset = 1;
+      return this.calculateLineOffset(nodeToFind, nodeToProcess.childNodes.item(this.lineNumber));
     }
-    let offset = 0;
-    let foundOriginalNode = false;
-    parentNode.childNodes.forEach(child => {
-      if (child === node) {
-        foundOriginalNode = true;
-      }
-      if (!foundOriginalNode) {
-        offset += child.nodeValue?.length || 0;
+    // Get the offset until the node was found
+    console.log('get offset in line segment' + nodeToProcess.textContent);
+    nodeToProcess.childNodes.forEach(node => {
+      if (this.nodeFound || node === nodeToFind) {
+        this.nodeFound = true;
+      } else if (node instanceof Text) {
+        this.lineOffset += node.length;
+      } else {
+        this.calculateLineOffset(nodeToFind, node);
       }
     });
-    if (!(parentNode instanceof HTMLDivElement && (parentNode as HTMLDivElement).className === 'line')) {
-      offset += this.calculateLineOffset(parentNode);
-    } else {
-      offset++;
-    }
-    return offset;
+    return this.lineOffset;
   }
 }
