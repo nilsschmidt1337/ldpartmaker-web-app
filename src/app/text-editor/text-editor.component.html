@@ -21,7 +21,7 @@
   <mat-slider min="1" max="100" step="1" value="1"></mat-slider>
 
 
-  <div [innerHTML]="source" class="content" [contentEditable]="true"
+  <div #sourceEditor [innerHTML]="source" class="content" [contentEditable]="true"
        (input)="onInputEvent($event)"
        (keydown)="updateCaretPos()"
        (keyup)="updateCaretPos()"
