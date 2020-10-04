@@ -14,11 +14,7 @@ export class TextEditorComponent implements OnInit {
 
   internalZIndex = 100;
   shown = true;
-  source = '<div class="line"></div>' +
-    '<div class="line">0 // First comment line</div>' +
-    '<div class="line">0 // a triangle</div>' +
-    '<div class="line">3 <b>16</b> 0 0 0 5 4 0 5 0 0</div>';
-  original = '<div class="line"></div>' +
+  initialSource = '<div class="line"></div>' +
     '<div class="line">0 // First comment line</div>' +
     '<div class="line">0 // a triangle</div>' +
     '<div class="line">3 <b>16</b> 0 0 0 5 4 0 5 0 0</div>';
@@ -26,6 +22,8 @@ export class TextEditorComponent implements OnInit {
   private lineNumber: number;
   private lineOffset: number;
   private nodeFound = false;
+  private lineCache = new Map<string, boolean>();
+  private oldSource = '';
   @ViewChild('sourceEditor', {read: ViewContainerRef}) viewContainerRef: ViewContainerRef;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
@@ -58,23 +56,73 @@ export class TextEditorComponent implements OnInit {
   }
 
   onInputEvent(event: any) {
+    this.updateCaretPos();
+    const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
+    const newSource = event.target.innerHTML;
+    const newLines = newSource.split('<div class="line">');
     const ie = event as InputEvent;
     console.log('data: ' + ie.data);
     console.log('inputType: ' + ie.inputType);
     console.log('detail: ' + ie.detail);
     console.log('type: ' + ie.type);
-    console.log(this.source);
-    this.updateCaretPos();
-    console.log(event.target.innerHTML);
-    console.log(event.target.innerText);
+    // TODO: Parse here
+    // Reformat
+    let newFormattedSource = '';
+    for (const line of newLines) {
+      if (!this.lineCache.has(line)) {
+        newFormattedSource += this.formatLine(line);
+      } else {
+        newFormattedSource += '<div class="line">' + line;
+      }
+    }
+    // Detect delta
+    let insertedText;
+    if (ie.data === null && ie.inputType === 'insertFromPaste') {
+      // Detect the data which was pasted via clipboard (slow?)
+      console.log('parse inserted clipboard content');
+      const oldLines = this.oldSource.split('<div class="line">');
+      let delta = '';
+      for (let i = this.lineNumber + 1; i < newLines.length; i++) {
+        if (i < oldLines.length) {
+          if (oldLines[i] !== newLines[i]) {
+            delta += newLines[i];
+          }
+        } else {
+          delta += newLines[i];
+        }
+        console.log(delta);
+      }
+    } else {
+      let lineCounter = 0;
+      for (const line of newLines) {
+        lineCounter++;
+      }
+      insertedText = ie.data;
+    }
+    this.oldSource = newFormattedSource;
+    event.target.innerHTML = newFormattedSource;
     this.restoreCaretPos(this.lineNumber, this.lineOffset);
+  }
 
+  formatLine(line: string) {
+    // First line element is empty
+    if (line === '') {
+      return '';
+    }
+    if (line.startsWith('0')) {
+      line = '<p style="color:blue">' + line.replace('</div>' , '') + '</p></div>';
+    }
+    return '<div class="line">' + line;
   }
 
   updateCaretPos() {
     const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
     this.nodeFound = false;
-    this.lineNumber = this.calculateLineNumber(getSelection().anchorNode);
+    const line = this.calculateLineNumber(getSelection().anchorNode);
+    if (line === 0) {
+      return;
+    }
+    this.lineNumber = line;
     this.lineOffset = (getSelection().anchorOffset + this.calculateLineOffset(getSelection().anchorNode, div));
     this.caretPos = this.lineNumber + ':' + this.lineOffset;
     console.log('lineNumber: ' + this.lineNumber);
@@ -83,11 +131,6 @@ export class TextEditorComponent implements OnInit {
 
   restoreCaretPos(lineNumber: number, lineOffset: number) {
     const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
-    // TODO: Parse here
-    if (lineNumber % 2 === 0) {
-      div.innerHTML = this.original;
-    }
-
     function min(num1: number, num2: number) {
       if (num1 < num2) {
         return num1;
@@ -119,7 +162,7 @@ export class TextEditorComponent implements OnInit {
       return;
     }
     console.log('initial offset:' + lineOffset);
-    if (lineOffset > (lineNode.childNodes.item(0).textContent?.length || 0)) {
+    if (!(lineNode.childNodes.item(0) instanceof Text)) {
       lineNode.childNodes.forEach(node => {
         consumeOffset(node);
       });
@@ -183,5 +226,9 @@ export class TextEditorComponent implements OnInit {
       }
     });
     return this.lineOffset;
+  }
+
+  onBeforePaste(event: any) {
+    console.log(event);
   }
 }
