@@ -56,7 +56,6 @@ export class TextEditorComponent implements OnInit {
   }
 
   onInputEvent(event: any) {
-    this.updateCaretPos();
     const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
     const newSource = event.target.innerHTML;
     const newLines = newSource.split('<div class="line">');
@@ -93,6 +92,7 @@ export class TextEditorComponent implements OnInit {
         console.log(delta);
       }
     } else {
+      this.updateCaretPos();
       let lineCounter = 0;
       for (const line of newLines) {
         lineCounter++;
