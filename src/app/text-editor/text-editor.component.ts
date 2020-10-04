@@ -109,11 +109,29 @@ export class TextEditorComponent implements OnInit {
     if (line === '') {
       return '';
     }
-    // Extract plain text
-    if (line.startsWith('0')) {
-      line = '<p style="color:blue">' + line.replace('</div>' , '') + '</p></div>';
+    let plaintext = this.extractPlaintext(line);
+    const trimmedPlaintext = plaintext.trim();
+    if (trimmedPlaintext.startsWith('0')) {
+      plaintext = '<p style="color:blue">' + plaintext + '</p>';
     }
-    return '<div class="line">' + line;
+    return '<div class="line">' + plaintext + '</div>';
+  }
+
+  private extractPlaintext(line: string) {
+    // Extract plain text from DOM string
+    // '<div>foo</div>' will be 'foo'
+    let plaintext = '';
+    let isAppending = true;
+    for (const c of line) {
+      if (c === '<') {
+        isAppending = false;
+      } else if (c === '>') {
+        isAppending = true;
+      } else if (isAppending) {
+        plaintext += c;
+      }
+    }
+    return plaintext;
   }
 
   updateCaretPos() {
