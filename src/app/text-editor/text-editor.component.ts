@@ -14,7 +14,7 @@ export class TextEditorComponent implements OnInit {
 
   internalZIndex = 100;
   shown = true;
-  initialSource = '<div class="line"></div>' +
+  initialSource =
     '<div class="line">0 // First comment line</div>' +
     '<div class="line">0 // a triangle</div>' +
     '<div class="line">3 <b>16</b> 0 0 0 5 4 0 5 0 0</div>';
@@ -72,6 +72,10 @@ export class TextEditorComponent implements OnInit {
         newFormattedSource += this.formatLine(line);
       } else {
         newFormattedSource += '<div class="line">' + line;
+        // Cache only 10.000 lines
+        if (this.lineCache.size > 10000) {
+          this.lineCache.delete(line);
+        }
       }
     }
     // Detect delta
@@ -110,11 +114,18 @@ export class TextEditorComponent implements OnInit {
       return '';
     }
     let plaintext = this.extractPlaintext(line);
-    const trimmedPlaintext = plaintext.trim();
+    const trimmedPlaintext = plaintext.replace('&nbsp;', ' ').trim();
     if (trimmedPlaintext.startsWith('0')) {
       plaintext = '<p style="color:blue">' + plaintext + '</p>';
     }
-    return '<div class="line">' + plaintext + '</div>';
+    // Finish formatted line with </div> tag and cache the result
+    plaintext = plaintext + '</div>';
+    this.lineCache.set(plaintext, true);
+    // Check for line breaks
+    if (line.indexOf('<br>') > -1) {
+      plaintext = plaintext + '<div class="line"><br></div>';
+    }
+    return '<div class="line">' + plaintext;
   }
 
   private extractPlaintext(line: string) {
@@ -156,7 +167,7 @@ export class TextEditorComponent implements OnInit {
       }
       return num2;
     }
-    let lineNode = div.childNodes.item(min(lineNumber, div.childNodes.length));
+    let lineNode = div.childNodes.item(min(lineNumber - 1, div.childNodes.length - 1));
     let nodeNotFound = true;
     let lastNodeLength = 0;
     function consumeOffset(node: Node) {
@@ -205,7 +216,7 @@ export class TextEditorComponent implements OnInit {
     if (parentNode === null) {
       return 0;
     }
-    let lineNumber = 0;
+    let lineNumber = 1;
     if (!(parentNode instanceof HTMLDivElement && (parentNode as HTMLDivElement).className === 'content')) {
       return this.calculateLineNumber(parentNode);
     } else {
@@ -231,7 +242,7 @@ export class TextEditorComponent implements OnInit {
     if (nodeToProcess instanceof HTMLDivElement && (nodeToProcess as HTMLDivElement).className === 'content') {
       console.log('dive into line ' + this.lineNumber + ' to find ' + nodeToFind.textContent);
       this.lineOffset = 1;
-      return this.calculateLineOffset(nodeToFind, nodeToProcess.childNodes.item(this.lineNumber));
+      return this.calculateLineOffset(nodeToFind, nodeToProcess.childNodes.item(this.lineNumber - 1));
     }
     // Get the offset until the node was found
     console.log('get offset in line segment' + nodeToProcess.textContent);
