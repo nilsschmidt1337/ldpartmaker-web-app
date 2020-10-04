@@ -69,8 +69,20 @@ export class TextEditorComponent implements OnInit {
     let newFormattedSource = '';
     for (const line of newLines) {
       if (!this.lineCache.has(line)) {
-        newFormattedSource += this.formatLine(line);
-      } else {
+        if (line.indexOf('<br>') > -1) {
+          // Check for line break with <br>
+          const splitResult = this.splitLineAtBreak(line);
+          newFormattedSource += splitResult[0];
+          newFormattedSource += splitResult[1];
+        } else if (line.indexOf('</p><p') > -1) {
+          // Check for line break with paragraph </p><p
+          const splitResult = this.splitLineAtParagraph(line);
+          newFormattedSource += splitResult[0];
+          newFormattedSource += splitResult[1];
+        } else {
+          newFormattedSource += this.formatLine(line);
+        }
+      } else if (line !== '</div>') {
         newFormattedSource += '<div class="line">' + line;
         // Cache only 10.000 lines
         if (this.lineCache.size > 10000) {
@@ -110,7 +122,7 @@ export class TextEditorComponent implements OnInit {
 
   formatLine(line: string) {
     // First line element is empty
-    if (line === '') {
+    if (line === '' || line === '</div>') {
       return '';
     }
     let plaintext = this.extractPlaintext(line);
@@ -121,10 +133,6 @@ export class TextEditorComponent implements OnInit {
     // Finish formatted line with </div> tag and cache the result
     plaintext = plaintext + '</div>';
     this.lineCache.set(plaintext, true);
-    // Check for line breaks
-    if (line.indexOf('<br>') > -1) {
-      plaintext = plaintext + '<div class="line"><br></div>';
-    }
     return '<div class="line">' + plaintext;
   }
 
@@ -258,7 +266,31 @@ export class TextEditorComponent implements OnInit {
     return this.lineOffset;
   }
 
-  onBeforePaste(event: any) {
-    console.log(event);
+  private splitLineAtBreak(line: string): string[] {
+    console.log('splitAtBreak: ' + line);
+    const splitResult = line.split('<br>');
+    let prefix = this.formatLine(splitResult[0]);
+    let suffix = this.formatLine(splitResult[1]);
+    if (prefix === '<div class="line"></div>') {
+      prefix = '<div class="line"><br></div>';
+    }
+    if (splitResult[1] === '</div>' || suffix === '<div class="line"></div>') {
+      suffix = '<div class="line"><br></div>';
+    }
+    return [prefix, suffix];
+  }
+
+  private splitLineAtParagraph(line: string): string[] {
+    console.log('splitAtParagraph: ' + line);
+    const splitResult = line.split('</p><p');
+    let prefix = this.formatLine(splitResult[0]);
+    let suffix = this.formatLine('<p' + splitResult[1]);
+    if (prefix === '<div class="line"></div>') {
+      prefix = '<div class="line"><br></div>';
+    }
+    if (suffix === '<div class="line"></div>') {
+      suffix = '<div class="line"><br></div>';
+    }
+    return [prefix, suffix];
   }
 }
