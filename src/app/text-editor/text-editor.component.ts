@@ -109,6 +109,7 @@ export class TextEditorComponent implements OnInit {
     if (line === '') {
       return '';
     }
+    // Extract plain text
     if (line.startsWith('0')) {
       line = '<p style="color:blue">' + line.replace('</div>' , '') + '</p></div>';
     }
@@ -162,7 +163,7 @@ export class TextEditorComponent implements OnInit {
       return;
     }
     console.log('initial offset:' + lineOffset);
-    if (!(lineNode.childNodes.item(0) instanceof Text)) {
+    if (!(lineNode.childNodes.length === 1 && lineNode.childNodes.item(0) instanceof Text)) {
       lineNode.childNodes.forEach(node => {
         consumeOffset(node);
       });
