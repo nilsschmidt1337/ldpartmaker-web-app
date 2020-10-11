@@ -25,6 +25,7 @@ export class TextEditorComponent implements OnInit {
   private lineCache = new Map<string, boolean>();
   private oldSource = '';
   @ViewChild('sourceEditor', {read: ViewContainerRef}) viewContainerRef: ViewContainerRef;
+  private breakNotFound = true;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
@@ -33,7 +34,7 @@ export class TextEditorComponent implements OnInit {
 
   async onClick() {
     this.internalZIndex = this.calculateZIndex();
-    console.log('calculated new z-index ' + this.internalZIndex);
+    // console.log('calculated new z-index ' + this.internalZIndex);
   }
 
   calculateZIndex() {
@@ -42,7 +43,7 @@ export class TextEditorComponent implements OnInit {
   }
 
   assignZIndex() {
-    console.log('assigned z-index ' + this.internalZIndex);
+    // console.log('assigned z-index ' + this.internalZIndex);
     return this.internalZIndex;
   }
 
@@ -67,18 +68,26 @@ export class TextEditorComponent implements OnInit {
     // TODO: Parse here
     // Reformat
     let newFormattedSource = '';
+    let lineCounter = 0;
+    this.breakNotFound = true;
+    let skipNextLine = false;
     for (const line of newLines) {
-      if (!this.lineCache.has(line)) {
-        if (line.indexOf('<br>') > -1) {
-          // Check for line break with <br>
-          const splitResult = this.splitLineAtBreak(line);
+      if (skipNextLine) {
+        skipNextLine = false;
+        continue;
+      }
+      if (!this.lineCache.has(line) || (this.breakNotFound && lineCounter === this.lineNumber && ie.inputType === 'insertParagraph')) {
+        if (lineCounter === this.lineNumber && ie.inputType === 'insertParagraph' && this.breakNotFound) {
+          const oldLines = this.oldSource.split('<div class="line">');
+          const oldLine = oldLines[this.lineNumber];
+          const splitResult = this.splitLine(oldLine);
           newFormattedSource += splitResult[0];
           newFormattedSource += splitResult[1];
-        } else if (line.indexOf('</p><p') > -1) {
-          // Check for line break with paragraph </p><p
-          const splitResult = this.splitLineAtParagraph(line);
-          newFormattedSource += splitResult[0];
-          newFormattedSource += splitResult[1];
+          this.breakNotFound = false;
+          if (newLines.length > oldLines.length) {
+            skipNextLine = true;
+          }
+          this.moveCaretToNextLine();
         } else {
           newFormattedSource += this.formatLine(line);
         }
@@ -89,6 +98,7 @@ export class TextEditorComponent implements OnInit {
           this.lineCache.delete(line);
         }
       }
+      lineCounter++;
     }
     // Detect delta
     let insertedText;
@@ -107,9 +117,9 @@ export class TextEditorComponent implements OnInit {
         }
         console.log(delta);
       }
-    } else {
+    } else if (ie.inputType !== 'insertParagraph') {
       this.updateCaretPos();
-      let lineCounter = 0;
+      lineCounter = 0;
       for (const line of newLines) {
         lineCounter++;
       }
@@ -120,10 +130,20 @@ export class TextEditorComponent implements OnInit {
     this.restoreCaretPos(this.lineNumber, this.lineOffset);
   }
 
+  private moveCaretToNextLine() {
+    this.lineNumber++;
+    this.lineOffset = 1;
+    this.caretPos = this.lineNumber + ':' + this.lineOffset;
+  }
+
   formatLine(line: string) {
     // First line element is empty
     if (line === '' || line === '</div>') {
       return '';
+    }
+    // Keep line breaks
+    if (line === '<br></div>') {
+      return '<div class="line"><br></div>';
     }
     let plaintext = this.extractPlaintext(line);
     const trimmedPlaintext = plaintext.replace('&nbsp;', ' ').trim();
@@ -153,7 +173,29 @@ export class TextEditorComponent implements OnInit {
     return plaintext;
   }
 
+  private replaceHtmlEntities(line: string) {
+    return line
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp/g, '&');
+  }
+
+  private insertHtmlEntities(line: string) {
+    return line
+      .replace(/&/g, '&amp;')
+      .replace(/ /g, '&nbsp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt');
+  }
+
   updateCaretPos() {
+    if (!this.breakNotFound) {
+      this.breakNotFound = true;
+      return;
+    }
     const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
     this.nodeFound = false;
     const line = this.calculateLineNumber(getSelection().anchorNode);
@@ -243,7 +285,7 @@ export class TextEditorComponent implements OnInit {
 
   calculateLineOffset(nodeToFind: Node, nodeToProcess: Node): number {
     // Quit when the node was found
-    if (this.nodeFound) {
+    if (this.nodeFound || nodeToProcess === null) {
       return 0;
     }
     // Dive into the current line
@@ -266,31 +308,28 @@ export class TextEditorComponent implements OnInit {
     return this.lineOffset;
   }
 
-  private splitLineAtBreak(line: string): string[] {
-    console.log('splitAtBreak: ' + line);
-    const splitResult = line.split('<br>');
-    let prefix = this.formatLine(splitResult[0]);
-    let suffix = this.formatLine(splitResult[1]);
-    if (prefix === '<div class="line"></div>') {
-      prefix = '<div class="line"><br></div>';
+  private splitLine(line: string): string[] {
+    const plaintext = this.replaceHtmlEntities(this.extractPlaintext(line));
+    console.log('split at ' +  this.lineOffset + ' (formatted): ' + line);
+    console.log('split at ' +  this.lineOffset + ' (plain): ' + plaintext);
+    if (line === '<br></div>') {
+      return ['<div class="line"><br></div>', '<div class="line"><br></div>'];
     }
-    if (splitResult[1] === '</div>' || suffix === '<div class="line"></div>') {
-      suffix = '<div class="line"><br></div>';
+    const splitResult = [
+      this.insertHtmlEntities(plaintext.substring(0, this.lineOffset - 1)),
+      this.insertHtmlEntities(plaintext.substring(this.lineOffset - 1))];
+    if (splitResult[0] === '') {
+      splitResult[0] = '<br></div>';
     }
-    return [prefix, suffix];
-  }
-
-  private splitLineAtParagraph(line: string): string[] {
-    console.log('splitAtParagraph: ' + line);
-    const splitResult = line.split('</p><p');
-    let prefix = this.formatLine(splitResult[0]);
-    let suffix = this.formatLine('<p' + splitResult[1]);
-    if (prefix === '<div class="line"></div>') {
-      prefix = '<div class="line"><br></div>';
+    if (splitResult[1] === '') {
+      splitResult[1] = '<br></div>';
     }
-    if (suffix === '<div class="line"></div>') {
-      suffix = '<div class="line"><br></div>';
-    }
+    console.log('split (prefix): ' + splitResult[0]);
+    console.log('split (suffix): ' + splitResult[1]);
+    const prefix = this.formatLine(splitResult[0]);
+    const suffix = this.formatLine(splitResult[1]);
+    console.log('split (formatted prefix): ' + prefix);
+    console.log('split (formatted suffix): ' + suffix);
     return [prefix, suffix];
   }
 }
