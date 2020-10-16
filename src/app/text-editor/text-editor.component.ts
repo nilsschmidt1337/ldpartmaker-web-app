@@ -21,6 +21,10 @@ export class TextEditorComponent implements OnInit {
   caretPos = '1:1';
   private lineNumber: number;
   private lineOffset: number;
+  private lineNumberEnd: number;
+  private lineOffsetEnd: number;
+  private selection: string;
+  private selectionLength: number;
   private nodeFound = false;
   private lineCache = new Map<string, boolean>();
   private oldSource = '';
@@ -202,9 +206,37 @@ export class TextEditorComponent implements OnInit {
     if (line === 0) {
       return;
     }
+    this.selection = getSelection().toString();
+    this.selectionLength = this.selection.length;
     this.lineNumber = line;
-    this.lineOffset = (getSelection().anchorOffset + this.calculateLineOffset(getSelection().anchorNode, div));
-    this.caretPos = this.lineNumber + ':' + this.lineOffset;
+    this.lineNumberEnd = this.calculateLineNumber(getSelection().focusNode);
+    this.nodeFound = false;
+    this.lineOffset = 0;
+    let tempLineOffset = (getSelection().focusOffset + this.calculateLineOffset(getSelection().focusNode, div, this.lineNumberEnd));
+    const foundEndOfLine = this.nodeFound;
+    if (!foundEndOfLine) {
+      this.lineOffset = 0;
+      this.lineNumberEnd--;
+      tempLineOffset = (getSelection().focusOffset + this.calculateLineOffset(getSelection().focusNode, div, this.lineNumberEnd));
+    }
+    this.nodeFound = false;
+    this.lineOffset = 0;
+    this.lineOffset = (getSelection().anchorOffset + this.calculateLineOffset(getSelection().anchorNode, div, this.lineNumber));
+    this.nodeFound = false;
+    this.lineOffsetEnd = tempLineOffset;
+    if (this.lineNumberEnd < this.lineNumber || this.lineNumberEnd === this.lineNumber && this.lineOffsetEnd < this.lineOffset) {
+      const swapLineNumber = this.lineNumberEnd;
+      const swapLineOffset = this.lineOffsetEnd;
+      this.lineNumberEnd = this.lineNumber;
+      this.lineOffsetEnd = this.lineOffset;
+      this.lineNumber = swapLineNumber;
+      this.lineOffset = swapLineOffset;
+    }
+    if (this.lineNumber === this.lineNumberEnd && this.lineOffset === this.lineOffsetEnd) {
+      this.caretPos = this.lineNumber + ':' + this.lineOffset;
+    } else {
+      this.caretPos = this.lineNumber + ':' + this.lineOffset + ' to ' + this.lineNumberEnd + ':' + this.lineOffsetEnd;
+    }
     console.log('lineNumber: ' + this.lineNumber);
     console.log('lineOffset: ' + this.lineOffset);
   }
@@ -283,16 +315,16 @@ export class TextEditorComponent implements OnInit {
     }
   }
 
-  calculateLineOffset(nodeToFind: Node, nodeToProcess: Node): number {
+  calculateLineOffset(nodeToFind: Node, nodeToProcess: Node, line: number): number {
     // Quit when the node was found
     if (this.nodeFound || nodeToProcess === null) {
       return 0;
     }
     // Dive into the current line
     if (nodeToProcess instanceof HTMLDivElement && (nodeToProcess as HTMLDivElement).className === 'content') {
-      console.log('dive into line ' + this.lineNumber + ' to find ' + nodeToFind.textContent);
+      console.log('dive into line ' + line + ' to find ' + nodeToFind.textContent);
       this.lineOffset = 1;
-      return this.calculateLineOffset(nodeToFind, nodeToProcess.childNodes.item(this.lineNumber - 1));
+      return this.calculateLineOffset(nodeToFind, nodeToProcess.childNodes.item(line - 1), line);
     }
     // Get the offset until the node was found
     console.log('get offset in line segment' + nodeToProcess.textContent);
@@ -302,7 +334,7 @@ export class TextEditorComponent implements OnInit {
       } else if (node instanceof Text) {
         this.lineOffset += node.length;
       } else {
-        this.calculateLineOffset(nodeToFind, node);
+        this.calculateLineOffset(nodeToFind, node, line);
       }
     });
     return this.lineOffset;
