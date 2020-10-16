@@ -213,8 +213,7 @@ export class TextEditorComponent implements OnInit {
     this.nodeFound = false;
     this.lineOffset = 0;
     let tempLineOffset = (getSelection().focusOffset + this.calculateLineOffset(getSelection().focusNode, div, this.lineNumberEnd));
-    const foundEndOfLine = this.nodeFound;
-    if (!foundEndOfLine) {
+    if (!this.nodeFound) {
       this.lineOffset = 0;
       this.lineNumberEnd--;
       tempLineOffset = (getSelection().focusOffset + this.calculateLineOffset(getSelection().focusNode, div, this.lineNumberEnd));
@@ -222,6 +221,11 @@ export class TextEditorComponent implements OnInit {
     this.nodeFound = false;
     this.lineOffset = 0;
     this.lineOffset = (getSelection().anchorOffset + this.calculateLineOffset(getSelection().anchorNode, div, this.lineNumber));
+    if (!this.nodeFound) {
+      this.lineOffset = 0;
+      this.lineNumber--;
+      this.lineOffset = (getSelection().anchorOffset + this.calculateLineOffset(getSelection().anchorNode, div, this.lineNumber));
+    }
     this.nodeFound = false;
     this.lineOffsetEnd = tempLineOffset;
     if (this.lineNumberEnd < this.lineNumber || this.lineNumberEnd === this.lineNumber && this.lineOffsetEnd < this.lineOffset) {
