@@ -74,22 +74,29 @@ export class TextEditorComponent implements OnInit {
     let newFormattedSource = '';
     let lineCounter = 0;
     this.breakNotFound = true;
-    let skipNextLine = false;
+    let skipNextLines = 0;
     for (const line of newLines) {
-      if (skipNextLine) {
-        skipNextLine = false;
+      if (skipNextLines > 0) {
+        skipNextLines--;
         continue;
       }
       if (!this.lineCache.has(line) || (this.breakNotFound && lineCounter === this.lineNumber && ie.inputType === 'insertParagraph')) {
         if (lineCounter === this.lineNumber && ie.inputType === 'insertParagraph' && this.breakNotFound) {
           const oldLines = this.oldSource.split('<div class="line">');
           const oldLine = oldLines[this.lineNumber];
-          const splitResult = this.splitLine(oldLine);
+          const splitResult = this.splitLine(this.lineOffset, oldLine);
           newFormattedSource += splitResult[0];
-          newFormattedSource += splitResult[1];
           this.breakNotFound = false;
-          if (newLines.length > oldLines.length) {
-            skipNextLine = true;
+          if (this.lineNumber === this.lineNumberEnd) {
+            newFormattedSource += splitResult[1];
+            if (newLines.length > oldLines.length) {
+              skipNextLines = 1;
+            }
+          } else {
+            const oldLineEnd = oldLines[this.lineNumberEnd];
+            const splitResultEnd = this.splitLine(this.lineOffsetEnd, oldLineEnd);
+            newFormattedSource += splitResultEnd[1];
+            skipNextLines = this.lineNumberEnd - this.lineNumber - 1;
           }
           this.moveCaretToNextLine();
         } else {
@@ -344,16 +351,16 @@ export class TextEditorComponent implements OnInit {
     return this.lineOffset;
   }
 
-  private splitLine(line: string): string[] {
+  private splitLine(offset: number, line: string): string[] {
     const plaintext = this.replaceHtmlEntities(this.extractPlaintext(line));
-    console.log('split at ' +  this.lineOffset + ' (formatted): ' + line);
-    console.log('split at ' +  this.lineOffset + ' (plain): ' + plaintext);
+    console.log('split at ' +  offset + ' (formatted): ' + line);
+    console.log('split at ' +  offset + ' (plain): ' + plaintext);
     if (line === '<br></div>') {
       return ['<div class="line"><br></div>', '<div class="line"><br></div>'];
     }
     const splitResult = [
-      this.insertHtmlEntities(plaintext.substring(0, this.lineOffset - 1)),
-      this.insertHtmlEntities(plaintext.substring(this.lineOffset - 1))];
+      this.insertHtmlEntities(plaintext.substring(0, offset - 1)),
+      this.insertHtmlEntities(plaintext.substring(offset - 1))];
     if (splitResult[0] === '') {
       splitResult[0] = '<br></div>';
     }
