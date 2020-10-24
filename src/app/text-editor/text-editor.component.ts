@@ -337,6 +337,12 @@ export class TextEditorComponent implements OnInit {
       this.lineOffset = 1;
       return this.calculateLineOffset(nodeToFind, nodeToProcess.childNodes.item(line - 1), line);
     }
+    // Detect lines which only consist of a line break
+    if (this.lineOffset === 1 && nodeToProcess.childNodes.length === 0 && nodeToProcess.nodeName.toUpperCase() === 'BR') {
+      console.log('line ' + line + ' contains only a line break.');
+      this.nodeFound = true;
+      return this.lineOffset;
+    }
     // Get the offset until the node was found
     console.log('get offset in line segment' + nodeToProcess.textContent);
     nodeToProcess.childNodes.forEach(node => {
