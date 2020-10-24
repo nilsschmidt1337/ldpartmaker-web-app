@@ -1,4 +1,12 @@
-import {Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ComponentFactoryResolver,
+  Input,
+  OnInit,
+  ViewChild,
+  ViewContainerRef
+} from '@angular/core';
 import {AppComponent} from '../app.component';
 
 @Component({
@@ -6,7 +14,7 @@ import {AppComponent} from '../app.component';
   templateUrl: './text-editor.component.html',
   styleUrls: ['./text-editor.component.css'],
 })
-export class TextEditorComponent implements OnInit {
+export class TextEditorComponent implements OnInit, AfterViewInit {
   static maxZIndex = 999;
 
   @Input() bounds: HTMLDivElement;
@@ -33,7 +41,14 @@ export class TextEditorComponent implements OnInit {
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
+  private readonly INSERT_PARAGRAPH = 'insertParagraph';
+  private readonly NONE = '';
+
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit() {
+    this.onInputEvent(new InputEvent(this.NONE));
   }
 
   async onClick() {
@@ -62,7 +77,7 @@ export class TextEditorComponent implements OnInit {
 
   onInputEvent(event: any) {
     const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
-    const newSource = event.target.innerHTML;
+    const newSource = div.innerHTML;
     const newLines = newSource.split('<div class="line">');
     const ie = event as InputEvent;
     console.log('data: ' + ie.data);
@@ -80,8 +95,8 @@ export class TextEditorComponent implements OnInit {
         skipNextLines--;
         continue;
       }
-      if (!this.lineCache.has(line) || (this.breakNotFound && lineCounter === this.lineNumber && ie.inputType === 'insertParagraph')) {
-        if (lineCounter === this.lineNumber && ie.inputType === 'insertParagraph' && this.breakNotFound) {
+      if (!this.lineCache.has(line) || (this.breakNotFound && lineCounter === this.lineNumber && ie.inputType === this.INSERT_PARAGRAPH)) {
+        if (lineCounter === this.lineNumber && ie.inputType === this.INSERT_PARAGRAPH && this.breakNotFound) {
           const oldLines = this.oldSource.split('<div class="line">');
           const oldLine = oldLines[this.lineNumber];
           const splitResult = this.splitLine(this.lineOffset, oldLine);
@@ -128,7 +143,7 @@ export class TextEditorComponent implements OnInit {
         }
         console.log(delta);
       }
-    } else if (ie.inputType !== 'insertParagraph') {
+    } else if (ie.inputType !== this.INSERT_PARAGRAPH && ie.inputType !== this.NONE) {
       this.updateCaretPos();
       lineCounter = 0;
       for (const line of newLines) {
@@ -137,8 +152,10 @@ export class TextEditorComponent implements OnInit {
       insertedText = ie.data;
     }
     this.oldSource = newFormattedSource;
-    event.target.innerHTML = newFormattedSource;
-    this.restoreCaretPos(this.lineNumber, this.lineOffset);
+    div.innerHTML = newFormattedSource;
+    if (ie.inputType !== this.NONE) {
+      this.restoreCaretPos(this.lineNumber, this.lineOffset);
+    }
   }
 
   private moveCaretToNextLine() {
@@ -205,6 +222,9 @@ export class TextEditorComponent implements OnInit {
   updateCaretPos() {
     if (!this.breakNotFound) {
       this.breakNotFound = true;
+      return;
+    }
+    if (getSelection().anchorNode === null) {
       return;
     }
     const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
