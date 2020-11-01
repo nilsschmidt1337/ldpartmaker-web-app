@@ -1,6 +1,7 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TextEditorComponent } from './text-editor.component';
+import {LDrawParser} from '../parser/ldraw-parser';
 
 describe('TextEditorComponent', () => {
   let component: TextEditorComponent;
@@ -8,7 +9,8 @@ describe('TextEditorComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ TextEditorComponent ]
+      declarations: [ TextEditorComponent ],
+      providers: [ LDrawParser ]
     })
     .compileComponents();
   }));
