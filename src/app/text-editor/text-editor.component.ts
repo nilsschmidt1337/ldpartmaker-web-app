@@ -8,6 +8,7 @@ import {
   ViewContainerRef
 } from '@angular/core';
 import {AppComponent} from '../app.component';
+import {LDrawParser} from '../parser/ldraw-parser';
 
 @Component({
   selector: 'app-text-editor',
@@ -39,7 +40,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
   @ViewChild('sourceEditor', {read: ViewContainerRef}) viewContainerRef: ViewContainerRef;
   private breakNotFound = true;
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
+  constructor(private componentFactoryResolver: ComponentFactoryResolver, private parser: LDrawParser) {}
 
   private readonly INSERT_PARAGRAPH = 'insertParagraph';
   private readonly NONE = '';
@@ -173,11 +174,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     if (line === '<br></div>') {
       return '<div class="line"><br></div>';
     }
-    let plaintext = this.extractPlaintext(line);
-    const trimmedPlaintext = plaintext.replace('&nbsp;', ' ').trim();
-    if (trimmedPlaintext.startsWith('0')) {
-      plaintext = '<p style="color:blue">' + plaintext + '</p>';
-    }
+    let plaintext = this.parser.parse(this.extractPlaintext(line));
     // Finish formatted line with </div> tag and cache the result
     plaintext = plaintext + '</div>';
     this.lineCache.set(plaintext, true);

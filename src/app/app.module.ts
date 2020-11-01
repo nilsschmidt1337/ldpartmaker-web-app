@@ -7,6 +7,7 @@ import {AppComponent} from './app.component';
 import {TextEditorComponent} from './text-editor/text-editor.component';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {MaterialModule} from './material/material.module';
+import {LDrawParser} from './parser/ldraw-parser';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,7 @@ import {MaterialModule} from './material/material.module';
         AngularDraggableModule,
         MaterialModule
     ],
-  providers: [],
+  providers: [LDrawParser],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
