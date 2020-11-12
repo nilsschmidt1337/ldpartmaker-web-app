@@ -26,7 +26,8 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
   initialSource =
     '<div class="line">0 // First comment line</div>' +
     '<div class="line">0 // a triangle</div>' +
-    '<div class="line">3 <b>16</b> 0 0 0 5 4 0 5 0 0</div>';
+    '<div class="line">3 <b>16</b> 0 0 0 5 4 0 5 0 0</div>' +
+    '<div class="line">4 16 -1 0 5 -8 0 4 -12 0 -4 -4 0 -5</div>';
   caretPos = '1:1';
   private lineNumber: number;
   private lineOffset: number;
