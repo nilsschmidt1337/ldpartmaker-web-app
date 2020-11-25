@@ -1,9 +1,19 @@
-import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ComponentFactoryResolver,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewContainerRef
+} from '@angular/core';
 import {Canvas, Renderer, Wizard} from 'webgl-operate';
 import {WebGLRenderer} from './webgl-renderer/webgl-renderer';
 import {name, version} from '../../package.json';
 import {NativeFileSystem} from './native-file-system-api/native-file-system';
 import {FileSystemEntriesOptions, ChooseFileSystemEntriesType} from './native-file-system-api/file-system-entries-options';
+import {LDConfigParser} from './parser/ldconfig-parser';
 
 @Component({
   selector: 'app-root',
@@ -29,9 +39,10 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   /**
    * Create the AppComponent and display the name and version of this program
    */
-  constructor() {
+  constructor(private ldConfigParser: LDConfigParser) {
     console.log('started ' + name + ' version ' + version);
     this.myself = this;
+    this.ldConfigParser.parseIncludedLDConfig();
   }
 
   /**
