@@ -1,5 +1,7 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { LDConfigParser } from './parser/ldconfig-parser';
+import { HttpClient, HttpHandler } from '@angular/common/http';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
@@ -7,6 +9,9 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
+      providers: [
+        LDConfigParser, HttpClient, HttpHandler
+      ]
     }).compileComponents();
   }));
 
