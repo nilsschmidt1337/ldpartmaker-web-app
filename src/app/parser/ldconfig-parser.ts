@@ -3,21 +3,28 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class LDConfigParser {
-  private ldConfigFile: string;
 
   constructor(private http: HttpClient) {
   }
 
   public parseIncludedLDConfig() {
-    this.http.get('assets/ldconfig.ldr', {responseType: 'text'}).toPromise()
-      .then(data => {
-        this.ldConfigFile = data;
-      })
-      .finally(() => this.parseLDConfigFile());
+    const url = 'assets/ldconfig.ldr';
+    this.downloadLDConfigFile(url);
   }
 
-  private parseLDConfigFile() {
-    for (const line of this.ldConfigFile.split(/[\r\n]+/)){
+  public parseLDConfigFromLDrawOrg() {
+    // This needs a CORS configuration to allow GET requests to LDraw.org
+    const url = 'https://www.ldraw.org/library/official/ldconfig.ldr';
+    this.downloadLDConfigFile(url);
+  }
+
+  private downloadLDConfigFile(url: string) {
+    this.http.get(url, {responseType: 'text'}).toPromise()
+      .then(data => this.parseLDConfigFile(data));
+  }
+
+  private parseLDConfigFile(ldConfigFile: string) {
+    for (const line of ldConfigFile.split(/[\r\n]+/)){
       this.parseLDConfigLine(line);
     }
   }
