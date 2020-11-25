@@ -12,7 +12,6 @@ import {Canvas, Renderer, Wizard} from 'webgl-operate';
 import {WebGLRenderer} from './webgl-renderer/webgl-renderer';
 import {name, version} from '../../package.json';
 import {NativeFileSystem} from './native-file-system-api/native-file-system';
-import {FileSystemEntriesOptions, ChooseFileSystemEntriesType} from './native-file-system-api/file-system-entries-options';
 import {LDConfigParser} from './parser/ldconfig-parser';
 
 @Component({
@@ -132,12 +131,9 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   }
 
   async onClick() {
-    const opts = new FileSystemEntriesOptions();
-    opts.type = ChooseFileSystemEntriesType.openFile;
-    // opts.type = ChooseFileSystemEntriesType.openDirectory;
-    const fileHandle = await NativeFileSystem.chooseFileSystemEntries(opts);
-    const f = await fileHandle.getFile();
-    console.log(f.name);
-    // Do something with the file handle
+    NativeFileSystem.chooseFileSystemEntries()
+      .then(files => files[0])
+      .then(fileHandle => fileHandle.getFile())
+      .then(file => this.ldConfigParser.parseLDConfig(file.text()));
   }
 }

@@ -2,8 +2,7 @@
 <!-- The application is rendered inside of a single HTML5 canvas. -->
 
 <canvas id="multiframe" class="fill-browser-area"
-        *ngIf="hasWebWorkerSupport && hasNativeFS"
-        (click)="onClick()">
+        *ngIf="hasWebWorkerSupport && hasNativeFS">
   <!-- Fallback page. In case of missing browser support. -->
   Your browser does <strong>not support</strong> the <code>&lt;canvas&gt;</code> element.
 </canvas>
@@ -79,7 +78,8 @@
 </div>
 
 <div class="drag-bounds" #dragBounds
-     *ngIf="hasWebWorkerSupport && hasNativeFS">
+     *ngIf="hasWebWorkerSupport && hasNativeFS"
+     (click)="onClick()">
   <app-text-editor [bounds]="dragBounds" [parentComponent]="myself"></app-text-editor>
   <app-text-editor [bounds]="dragBounds" [parentComponent]="myself"></app-text-editor>
   <app-text-editor [bounds]="dragBounds" [parentComponent]="myself"></app-text-editor>

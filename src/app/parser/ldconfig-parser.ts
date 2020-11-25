@@ -18,6 +18,10 @@ export class LDConfigParser {
     this.downloadLDConfigFile(url);
   }
 
+  public parseLDConfig(textPromise: Promise<string>) {
+    textPromise.then(text => this.parseLDConfigFile(text));
+  }
+
   private downloadLDConfigFile(url: string) {
     this.http.get(url, {responseType: 'text'}).toPromise()
       .then(data => this.parseLDConfigFile(data));
