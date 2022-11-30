@@ -121,7 +121,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
       console.error('problem during Canvas creation');
       this.hasWebGL2Support = false;
     }
-    
+
     console.log('WebGL 2 capable browser    : ' + this.hasWebGL2Support);
 
     const divElement = document.getElementById('webgl2-not-supported') as HTMLDivElement;
