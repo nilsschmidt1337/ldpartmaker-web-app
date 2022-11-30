@@ -110,11 +110,18 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
    */
   onInitialize(element: HTMLCanvasElement | string) {
 
-    this.canvas = new Canvas(element, {antialias: true});
-    this.canvas.controller.multiFrameNumber = 1;
-    this.canvas.framePrecision = Wizard.Precision.byte;
-    this.canvas.frameScale = [1.0, 1.0];
-    this.hasWebGL2Support = this.canvas.context.isWebGL2;
+    try {
+      this.canvas = new Canvas(element, {antialias: true});
+      this.canvas.controller.multiFrameNumber = 1;
+      this.canvas.framePrecision = Wizard.Precision.byte;
+      this.canvas.frameScale = [1.0, 1.0];
+      this.hasWebGL2Support = this.canvas.context.isWebGL2;
+    } catch (e) {
+      console.log(e);
+      console.error('problem during Canvas creation');
+      this.hasWebGL2Support = false;
+    }
+    
     console.log('WebGL 2 capable browser    : ' + this.hasWebGL2Support);
 
     const divElement = document.getElementById('webgl2-not-supported') as HTMLDivElement;
@@ -126,7 +133,9 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     } else {
       // Show the error div and hide the canvas
       divElement.hidden = false;
-      this.canvas.element.hidden = true;
+      if (this.canvas != null) {
+        this.canvas.element.hidden = true;
+      }
     }
   }
 
