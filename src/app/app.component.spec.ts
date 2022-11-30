@@ -41,4 +41,8 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement;
     expect(compiled.querySelector('#nfs-api-not-supported').textContent).toContain('Native File System API');
   });
+
+  afterEach(() => {
+    TestBed.resetTestingModule();
+  });
 });
