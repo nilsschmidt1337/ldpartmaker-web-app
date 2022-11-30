@@ -27,7 +27,13 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['ChromeHeadless'],
+    browsers: ['Chrome_without_GPU'],
+    customLaunchers: {
+      Chrome_without_GPU: {
+        base: 'ChromeHeadless',
+        flags: ['--disable-gpu', '--disable-software-rasterizer']
+      }
+    },
     singleRun: true,
     restartOnFileChange: true
   });
