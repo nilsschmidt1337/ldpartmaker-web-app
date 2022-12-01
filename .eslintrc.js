@@ -144,9 +144,16 @@ module.exports = {
                 "ignoreParameters": true
             }
         ],
+        "no-bitwise": "off",
+        "@typescript-eslint/no-unsafe-return": "warn",
         "@typescript-eslint/no-misused-new": "error",
         "@typescript-eslint/no-namespace": "error",
         "@typescript-eslint/no-non-null-assertion": "error",
+        "@typescript-eslint/no-unsafe-argument": "warn",
+        "@typescript-eslint/no-unsafe-assignment": "warn",
+        "@typescript-eslint/no-unsafe-member-access": "warn",
+        "@typescript-eslint/restrict-plus-operands": "warn",
+        "@typescript-eslint/no-unsafe-call": "warn",
         "@typescript-eslint/no-parameter-properties": "off",
         "@typescript-eslint/no-shadow": [
             "error",
@@ -217,7 +224,6 @@ module.exports = {
             }
         ],
         "new-parens": "error",
-        "no-bitwise": "error",
         "no-caller": "error",
         "no-cond-assign": "error",
         "no-console": [
