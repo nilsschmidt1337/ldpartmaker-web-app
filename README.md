@@ -2,8 +2,8 @@
 
 ![](https://github.com/nilsschmidt1337/ldpartmaker-web-app/workflows/Node.js%20CI/badge.svg?branch=master)
 
-This project uses [Angular CLI](https://github.com/angular/angular-cli) version 11.2.19. 
-Upgrade history : 9.1.7 -> 10.1.2 -> 11.2.19
+This project uses [Angular CLI](https://github.com/angular/angular-cli) version 12.2.18. 
+Upgrade history : 9.1.7 -> 10.1.2 -> 11.2.19 -> 12.2.18
 
 ## Development server
 

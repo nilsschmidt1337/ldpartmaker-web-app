@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {Canvas, Renderer, Wizard} from 'webgl-operate';
 import {WebGLRenderer} from './webgl-renderer/webgl-renderer';
-import {name, version} from '../../package.json';
+import {default as metadata} from '../../package.json';
 import {NativeFileSystem} from './native-file-system-api/native-file-system';
 import {LDConfigParser} from './parser/ldconfig-parser';
 
@@ -39,7 +39,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
    * Create the AppComponent and display the name and version of this program
    */
   constructor(private ldConfigParser: LDConfigParser) {
-    console.log('started ' + name + ' version ' + version);
+    console.log('started ' + metadata.name + ' version ' + metadata.version);
     this.myself = this;
     this.ldConfigParser.parseIncludedLDConfig();
   }
