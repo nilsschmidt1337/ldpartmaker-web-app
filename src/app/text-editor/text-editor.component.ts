@@ -21,6 +21,8 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
   @Input() bounds: HTMLDivElement;
   @Input() parentComponent: AppComponent;
 
+  @ViewChild('sourceEditor', {read: ViewContainerRef}) viewContainerRef: ViewContainerRef;
+
   internalZIndex = 100;
   shown = true;
   initialSource =
@@ -29,6 +31,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     '<div class="line">3 <b>16</b> 0 0 0 5 4 0 5 0 0</div>' +
     '<div class="line">4 16 -1 0 5 -8 0 4 -12 0 -4 -4 0 -5</div>';
   caretPos = '1:1';
+
   private lineNumber: number;
   private lineOffset: number;
   private lineNumberEnd: number;
@@ -38,13 +41,12 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
   private nodeFound = false;
   private lineCache = new Map<string, boolean>();
   private oldSource = '';
-  @ViewChild('sourceEditor', {read: ViewContainerRef}) viewContainerRef: ViewContainerRef;
   private breakNotFound = true;
-
-  constructor(private componentFactoryResolver: ComponentFactoryResolver, private parser: LDrawParser) {}
 
   private readonly INSERT_PARAGRAPH = 'insertParagraph';
   private readonly NONE = '';
+
+  constructor(private componentFactoryResolver: ComponentFactoryResolver, private parser: LDrawParser) {}
 
   ngOnInit(): void {
   }
@@ -53,7 +55,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     this.onInputEvent(new InputEvent(this.NONE));
   }
 
-  async onClick() {
+  onClick() {
     this.internalZIndex = this.calculateZIndex();
     // console.log('calculated new z-index ' + this.internalZIndex);
   }
@@ -160,12 +162,6 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private moveCaretToNextLine() {
-    this.lineNumber++;
-    this.lineOffset = 1;
-    this.caretPos = this.lineNumber + ':' + this.lineOffset;
-  }
-
   formatLine(line: string) {
     // First line element is empty
     if (line === '' || line === '</div>') {
@@ -180,41 +176,6 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     plaintext = plaintext + '</div>';
     this.lineCache.set(plaintext, true);
     return '<div class="line">' + plaintext;
-  }
-
-  private extractPlaintext(line: string) {
-    // Extract plain text from DOM string
-    // '<div>foo</div>' will be 'foo'
-    let plaintext = '';
-    let isAppending = true;
-    for (const c of line) {
-      if (c === '<') {
-        isAppending = false;
-      } else if (c === '>') {
-        isAppending = true;
-      } else if (isAppending) {
-        plaintext += c;
-      }
-    }
-    return plaintext;
-  }
-
-  private replaceHtmlEntities(line: string) {
-    return line
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&quot;/g, '"')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&amp/g, '&');
-  }
-
-  private insertHtmlEntities(line: string) {
-    return line
-      .replace(/&/g, '&amp;')
-      .replace(/ /g, '&nbsp;')
-      .replace(/"/g, '&quot;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt');
   }
 
   updateCaretPos() {
@@ -272,6 +233,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
 
   restoreCaretPos(lineNumber: number, lineOffset: number) {
     const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
+    // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
     function min(num1: number, num2: number) {
       if (num1 < num2) {
         return num1;
@@ -281,6 +243,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     let lineNode = div.childNodes.item(min(lineNumber - 1, div.childNodes.length - 1));
     let nodeNotFound = true;
     let lastNodeLength = 0;
+    // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
     function consumeOffset(node: Node) {
       if (nodeNotFound && node instanceof Text) {
         if (lineOffset > node.length) {
@@ -373,6 +336,47 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
       }
     });
     return this.lineOffset;
+  }
+
+  private moveCaretToNextLine() {
+    this.lineNumber++;
+    this.lineOffset = 1;
+    this.caretPos = this.lineNumber + ':' + this.lineOffset;
+  }
+
+  private extractPlaintext(line: string) {
+    // Extract plain text from DOM string
+    // '<div>foo</div>' will be 'foo'
+    let plaintext = '';
+    let isAppending = true;
+    for (const c of line) {
+      if (c === '<') {
+        isAppending = false;
+      } else if (c === '>') {
+        isAppending = true;
+      } else if (isAppending) {
+        plaintext += c;
+      }
+    }
+    return plaintext;
+  }
+
+  private replaceHtmlEntities(line: string) {
+    return line
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp/g, '&');
+  }
+
+  private insertHtmlEntities(line: string) {
+    return line
+      .replace(/&/g, '&amp;')
+      .replace(/ /g, '&nbsp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt');
   }
 
   private splitLine(offset: number, line: string): string[] {

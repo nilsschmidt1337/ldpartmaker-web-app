@@ -94,7 +94,6 @@ void main() {
 
     // Clear the canvas
     gl.clearColor(0, 0, 0, 0);
-    // tslint:disable-next-line:no-bitwise
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // Tell it to use our program (pair of shaders)

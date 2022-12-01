@@ -8,7 +8,7 @@ describe('TextEditorComponent', () => {
   let fixture: ComponentFixture<TextEditorComponent>;
 
   beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+    void TestBed.configureTestingModule({
       declarations: [ TextEditorComponent ],
       providers: [ LDrawParser ]
     })
@@ -22,7 +22,7 @@ describe('TextEditorComponent', () => {
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    void expect(component).toBeTruthy();
   });
 
   afterEach(() => {

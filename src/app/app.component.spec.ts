@@ -5,7 +5,7 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+    void TestBed.configureTestingModule({
       declarations: [
         AppComponent
       ],
@@ -18,13 +18,13 @@ describe('AppComponent', () => {
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    void expect(app).toBeTruthy();
   });
 
   it('should have as title \'ldpartmaker-web-app\'', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('ldpartmaker-web-app');
+    void expect(app.title).toEqual('ldpartmaker-web-app');
   });
 
   it('should have no canvas when the native file system api is supported', () => {
@@ -39,7 +39,7 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('#nfs-api-not-supported').textContent).toContain('Native File System API');
+    void expect(compiled.querySelector('#nfs-api-not-supported').textContent).toContain('Native File System API');
   });
 
   afterEach(() => {

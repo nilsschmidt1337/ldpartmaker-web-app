@@ -23,17 +23,16 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
   @ViewChild('dragBounds', {read: ViewContainerRef}) viewContainerRef: ViewContainerRef;
 
+  public myself: AppComponent;
+
   title = 'ldpartmaker-web-app';
 
-  // tslint:disable-next-line
-  hasNativeFS = window.showOpenFilePicker && window.showSaveFilePicker && window.showDirectoryPicker;
+  hasNativeFS = window['showOpenFilePicker'] && window['showSaveFilePicker'] && window['showDirectoryPicker']; //eslint-disable-line
   hasWebGL2Support = false;
   hasWebWorkerSupport = typeof Worker !== undefined;
 
   private canvas: Canvas;
   private renderer: WebGLRenderer;
-
-  public myself: AppComponent;
 
   /**
    * Create the AppComponent and display the name and version of this program
@@ -42,6 +41,40 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     console.log('started ' + metadata.name + ' version ' + metadata.version);
     this.myself = this;
     this.ldConfigParser.parseIncludedLDConfig();
+  }
+
+  /**
+   * The ngOnDestroy method is called both when the component is destroyed by Angular
+   * AND when the browser event window:beforeunload is fired.
+   * (*) Page Refresh
+   * (*) Tab Close
+   * (*) Browser Close
+   * (*) Navigation Away From Page
+   */
+  @HostListener('window:beforeunload')
+  ngOnDestroy() {
+
+    console.log('disposing resources..');
+
+    if (this.canvas != null) {
+      try {
+        this.canvas.dispose();
+        console.log('canvas is disposed');
+      } catch (e) {
+        console.log(e);
+        console.error('problem during canvas disposal');
+      }
+    }
+
+    if ((this.renderer as Renderer)?.initialized) {
+      try {
+        (this.renderer as Renderer).uninitialize();
+        console.log('renderer is uninitialized. It was done after the canvas disposal.');
+      } catch (e) {
+        console.log(e);
+        console.error('problem during renderer disposal');
+      }
+    }
   }
 
   /**
@@ -65,40 +98,6 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
 
     if (htmlCanvasElement != null) {
       this.onInitialize(htmlCanvasElement);
-    }
-  }
-
-  /**
-   * The ngOnDestroy method is called both when the component is destroyed by Angular
-   * AND when the browser event window:beforeunload is fired.
-   * (*) Page Refresh
-   * (*) Tab Close
-   * (*) Browser Close
-   * (*) Navigation Away From Page
-   */
-  @HostListener('window:beforeunload')
-  async ngOnDestroy() {
-
-    console.log('disposing resources..');
-
-    if (this.canvas != null) {
-      try {
-        this.canvas.dispose();
-        console.log('canvas is disposed');
-      } catch (e) {
-        console.log(e);
-        console.error('problem during canvas disposal');
-      }
-    }
-
-    if ((this.renderer as Renderer)?.initialized) {
-      try {
-        (this.renderer as Renderer).uninitialize();
-        console.log('renderer is uninitialized. It was done after the canvas disposal.');
-      } catch (e) {
-        console.log(e);
-        console.error('problem during renderer disposal');
-      }
     }
   }
 
@@ -139,8 +138,8 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     }
   }
 
-  async onClick() {
-    NativeFileSystem.chooseFileSystemEntries()
+  onClick() {
+    void NativeFileSystem.chooseFileSystemEntries()
       .then(files => files[0])
       .then(fileHandle => fileHandle.getFile())
       .then(file => this.ldConfigParser.parseLDConfig(file.text()));
