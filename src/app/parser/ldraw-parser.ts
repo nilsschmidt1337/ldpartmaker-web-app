@@ -3,6 +3,7 @@ import {DatKeyword} from './dat-keyword';
 export class LDrawParser {
   /**
    * Parses and formats an LDraw text line
+   *
    * @param line the plaintext of the current line (without HTML tags, etc.)
    */
   public parse(line: string): string {
@@ -20,15 +21,15 @@ export class LDrawParser {
       }
       const lineTypeNumber = Number(dataSegments[0]);
       switch (lineTypeNumber) {
-        case 0:
-          return this.formatComment(plainLine);
-          break;
-        case 3:
-          return this.formatTriangle(plainLine, dataSegments);
-          break;
-        default:
-          return this.formatInvalidLineType(plainLine);
-          break;
+      case 0:
+        return this.formatComment(plainLine);
+        break;
+      case 3:
+        return this.formatTriangle(plainLine, dataSegments);
+        break;
+      default:
+        return this.formatInvalidLineType(plainLine);
+        break;
       }
     }
     return line;

@@ -12,7 +12,7 @@ describe('TextEditorComponent', () => {
       declarations: [ TextEditorComponent ],
       providers: [ LDrawParser ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

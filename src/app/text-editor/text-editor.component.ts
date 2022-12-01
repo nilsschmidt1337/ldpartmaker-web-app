@@ -328,7 +328,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
       return 0;
     }
     let lineNumber = 1;
-    if (!(parentNode instanceof HTMLDivElement && (parentNode as HTMLDivElement).className === 'content')) {
+    if (!(parentNode instanceof HTMLDivElement && (parentNode ).className === 'content')) {
       return this.calculateLineNumber(parentNode);
     } else {
       let foundOriginalNode = false;
@@ -350,7 +350,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
       return 0;
     }
     // Dive into the current line
-    if (nodeToProcess instanceof HTMLDivElement && (nodeToProcess as HTMLDivElement).className === 'content') {
+    if (nodeToProcess instanceof HTMLDivElement && (nodeToProcess ).className === 'content') {
       console.log('dive into line ' + line + ' to find ' + nodeToFind.textContent);
       this.lineOffset = 1;
       return this.calculateLineOffset(nodeToFind, nodeToProcess.childNodes.item(line - 1), line);

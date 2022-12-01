@@ -4,6 +4,6 @@ import { FileSystemEntriesOptions } from './file-system-entries-options';
 export class NativeFileSystem {
   public static async chooseFileSystemEntries(options?: FileSystemEntriesOptions): Promise<FileSystemFileHandle[]> {
     // tslint:disable-next-line
-    return window['showOpenFilePicker'](options);
+    return window.showOpenFilePicker(options);
   }
 }

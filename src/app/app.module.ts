@@ -15,13 +15,13 @@ import {LDConfigParser} from './parser/ldconfig-parser';
     AppComponent,
     TextEditorComponent
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        HttpClientModule,
-        AngularDraggableModule,
-        MaterialModule
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    AngularDraggableModule,
+    MaterialModule
+  ],
   providers: [LDrawParser, LDConfigParser],
   bootstrap: [AppComponent]
 })

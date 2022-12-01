@@ -5,6 +5,7 @@ export class WebGL2ShaderProgramFactory {
 
   /**
    * Creates a shader program from a pair of shader source strings (vertex and fragment shader)
+   *
    * @param gl the WebGL 2 rendering context
    * @param vertexShaderSource the source code of an ES 3.0 vertex shader (code begins with #version 300 es)
    * @param fragmentShaderSource the source code of an ES 3.0 fragment shader (code begins with #version 300 es)
@@ -31,6 +32,7 @@ export class WebGL2ShaderProgramFactory {
 
   /**
    * Creates a WebGLShader instance for a given context
+   *
    * @param gl the WebGL 2 rendering context
    * @param sourceCode the source code of an ES 3.0 shader (code begins with #version 300 es)
    * @param type GLenum.VERTEX_SHADER or GLenum.FRAGMENT_SHADER

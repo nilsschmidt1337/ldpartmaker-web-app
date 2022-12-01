@@ -26,7 +26,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   title = 'ldpartmaker-web-app';
 
   // tslint:disable-next-line
-  hasNativeFS = window['showOpenFilePicker'] && window['showSaveFilePicker'] && window['showDirectoryPicker'];
+  hasNativeFS = window.showOpenFilePicker && window.showSaveFilePicker && window.showDirectoryPicker;
   hasWebGL2Support = false;
   hasWebWorkerSupport = typeof Worker !== undefined;
 
