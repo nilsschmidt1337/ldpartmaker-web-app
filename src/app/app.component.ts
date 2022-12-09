@@ -142,6 +142,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     void NativeFileSystem.chooseFileSystemEntries()
       .then(files => files[0])
       .then(fileHandle => fileHandle.getFile())
-      .then(file => this.ldConfigParser.parseLDConfig(file.text()));
+      .then(file => this.ldConfigParser.parseLDConfig(file.text()))
+      .catch(() => { console.log('aborted the file decision'); });
   }
 }
