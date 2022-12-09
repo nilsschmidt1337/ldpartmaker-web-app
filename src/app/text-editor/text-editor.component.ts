@@ -287,7 +287,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     getSelection()?.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
   }
 
-  calculateLineNumber(node: Node) {
+  calculateLineNumber(node: Node): number {
     const parentNode = node.parentNode;
     if (parentNode === null) {
       return 0;
