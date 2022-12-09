@@ -179,38 +179,40 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
   }
 
   updateCaretPos() {
+    const s = getSelection();
     if (!this.breakNotFound) {
       this.breakNotFound = true;
       return;
     }
-    if (getSelection().anchorNode === null) {
+    if (!s || s.anchorNode === null || s.focusNode === null) {
       return;
     }
+
     const div = this.viewContainerRef.element.nativeElement as HTMLDivElement;
     this.nodeFound = false;
-    const line = this.calculateLineNumber(getSelection().anchorNode);
+    const line = this.calculateLineNumber(s.anchorNode);
     if (line === 0) {
       return;
     }
-    this.selection = getSelection().toString();
+    this.selection = s.toString();
     this.selectionLength = this.selection.length;
     this.lineNumber = line;
-    this.lineNumberEnd = this.calculateLineNumber(getSelection().focusNode);
+    this.lineNumberEnd = this.calculateLineNumber(s.focusNode);
     this.nodeFound = false;
     this.lineOffset = 0;
-    let tempLineOffset = (getSelection().focusOffset + this.calculateLineOffset(getSelection().focusNode, div, this.lineNumberEnd));
+    let tempLineOffset = (s.focusOffset + this.calculateLineOffset(s.focusNode, div, this.lineNumberEnd));
     if (!this.nodeFound) {
       this.lineOffset = 0;
       this.lineNumberEnd--;
-      tempLineOffset = (getSelection().focusOffset + this.calculateLineOffset(getSelection().focusNode, div, this.lineNumberEnd));
+      tempLineOffset = (s.focusOffset + this.calculateLineOffset(s.focusNode, div, this.lineNumberEnd));
     }
     this.nodeFound = false;
     this.lineOffset = 0;
-    this.lineOffset = (getSelection().anchorOffset + this.calculateLineOffset(getSelection().anchorNode, div, this.lineNumber));
+    this.lineOffset = (s.anchorOffset + this.calculateLineOffset(s.anchorNode, div, this.lineNumber));
     if (!this.nodeFound) {
       this.lineOffset = 0;
       this.lineNumber--;
-      this.lineOffset = (getSelection().anchorOffset + this.calculateLineOffset(getSelection().anchorNode, div, this.lineNumber));
+      this.lineOffset = (s.anchorOffset + this.calculateLineOffset(s.anchorNode, div, this.lineNumber));
     }
     this.nodeFound = false;
     this.lineOffsetEnd = tempLineOffset;
@@ -282,7 +284,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     const anchorOffset = lineOffset;
     const focusNode = lineNode;
     const focusOffset = lineOffset;
-    getSelection().setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    getSelection()?.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
   }
 
   calculateLineNumber(node: Node) {

@@ -14,6 +14,9 @@ export class WebGL2ShaderProgramFactory {
                                          vertexShaderSource: string,
                                          fragmentShaderSource: string): WebGLProgram {
     const program = gl.createProgram();
+    if (!program) {
+      throw Error('Cant create shader program instance');
+    }
 
     const vertexShader = this.createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
     const fragmentShader = this.createShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
@@ -21,6 +24,7 @@ export class WebGL2ShaderProgramFactory {
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const success = gl.getProgramParameter(program, gl.LINK_STATUS);
     if (success) {
       return program;
@@ -28,6 +32,7 @@ export class WebGL2ShaderProgramFactory {
 
     console.log(gl.getProgramInfoLog(program));
     gl.deleteProgram(program);
+    throw Error('Cant create shader program (vertex: ' + vertexShaderSource + ', fragment: ' + fragmentShaderSource + ')');
   }
 
   /**
@@ -41,6 +46,10 @@ export class WebGL2ShaderProgramFactory {
   public static createShader(gl: WebGL2RenderingContext, sourceCode: string, type: GLenum): WebGLShader {
     // Compiles either a shader of type GLenum.VERTEX_SHADER or GLenum.FRAGMENT_SHADER
     const shader = gl.createShader(type);
+    if (!shader) {
+      throw Error('Cant create shader instance');
+    }
+
     gl.shaderSource(shader, sourceCode);
     gl.compileShader(shader);
 
