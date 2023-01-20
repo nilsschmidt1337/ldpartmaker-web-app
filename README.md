@@ -19,6 +19,9 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 Run `ng build --configuration production --base-href ./` for a production build.
 You can run the production build artifact with *Python 3* by simply doing a `cd ./dist/ldpartmaker-web-app/` and `python -m http.server 4200`.
 
+Or else run `sh build.sh`. It will create a build artifact which can be directly opened in a browser without CORS issues.
+`./dist/ldpartmaker-web-app/index.html`
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
