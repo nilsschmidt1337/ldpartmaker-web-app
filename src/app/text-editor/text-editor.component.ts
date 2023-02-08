@@ -84,10 +84,10 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     const newSource = div.innerHTML;
     const newLines = newSource.split('<div class="line">');
     const ie = event as InputEvent;
-    console.log('data: ' + ie.data);
-    console.log('inputType: ' + ie.inputType);
-    console.log('detail: ' + ie.detail);
-    console.log('type: ' + ie.type);
+    console.log(`data: ${ie.data ?? 'null'}`);
+    console.log(`inputType: ${ie.inputType}`);
+    console.log(`detail: ${ie.detail}`);
+    console.log(`type: ${ie.type}`);
     // TODO: Parse here
     // Reformat
     let newFormattedSource = '';
@@ -150,6 +150,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     } else if (ie.inputType !== this.INSERT_PARAGRAPH && ie.inputType !== this.NONE) {
       this.updateCaretPos();
       lineCounter = 0;
+      // lineCounter += newLines.length;
       for (const line of newLines) {
         lineCounter++;
       }
@@ -225,12 +226,12 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
       this.lineOffset = swapLineOffset;
     }
     if (this.lineNumber === this.lineNumberEnd && this.lineOffset === this.lineOffsetEnd) {
-      this.caretPos = this.lineNumber + ':' + this.lineOffset;
+      this.caretPos = `${this.lineNumber}:${this.lineOffset}`;
     } else {
-      this.caretPos = this.lineNumber + ':' + this.lineOffset + ' to ' + this.lineNumberEnd + ':' + this.lineOffsetEnd;
+      this.caretPos = `${this.lineNumber}:${this.lineOffset} to ${this.lineNumberEnd}:${this.lineOffsetEnd}`;
     }
-    console.log('lineNumber: ' + this.lineNumber);
-    console.log('lineOffset: ' + this.lineOffset);
+    console.log(`lineNumber: ${this.lineNumber}`);
+    console.log(`lineOffset: ${this.lineOffset}`);
   }
 
   restoreCaretPos(lineNumber: number, lineOffset: number) {
@@ -252,12 +253,12 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
           lineOffset -= node.length;
           lineNode = node;
           lastNodeLength = node.length;
-          console.log('[in progress] text:' + node.wholeText + ' offset:' + lineOffset);
+          console.log(`[in progress] text:${node.wholeText} offset:${lineOffset}`);
         } else if (nodeNotFound) {
           lineOffset--;
           lineNode = node;
           nodeNotFound = false;
-          console.log('[finish] text:' + node.wholeText + ' offset:' + lineOffset);
+          console.log(`[finish] text:${node.wholeText} offset:${lineOffset}`);
         }
       } else if ((node.childNodes?.length || 0) > 0) {
         node.childNodes.forEach(consumeOffset);
@@ -267,7 +268,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     if (!(lineNode instanceof HTMLDivElement)) {
       return;
     }
-    console.log('initial offset:' + lineOffset);
+    console.log(`initial offset:${lineOffset}`);
     if (!(lineNode.childNodes.length === 1 && lineNode.childNodes.item(0) instanceof Text)) {
       lineNode.childNodes.forEach(node => {
         consumeOffset(node);
@@ -316,18 +317,18 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
     }
     // Dive into the current line
     if (nodeToProcess instanceof HTMLDivElement && (nodeToProcess ).className === 'content') {
-      console.log('dive into line ' + line + ' to find ' + nodeToFind.textContent);
+      console.log(`dive into line ${line} to find ${nodeToFind.textContent ?? 'null'}`);
       this.lineOffset = 1;
       return this.calculateLineOffset(nodeToFind, nodeToProcess.childNodes.item(line - 1), line);
     }
     // Detect lines which only consist of a line break
     if (this.lineOffset === 1 && nodeToProcess.childNodes.length === 0 && nodeToProcess.nodeName.toUpperCase() === 'BR') {
-      console.log('line ' + line + ' contains only a line break.');
+      console.log(`line ${line} contains only a line break.`);
       this.nodeFound = true;
       return this.lineOffset;
     }
     // Get the offset until the node was found
-    console.log('get offset in line segment' + nodeToProcess.textContent);
+    console.log(`get offset in line segment ${nodeToProcess.textContent ?? 'null'}`);
     nodeToProcess.childNodes.forEach(node => {
       if (this.nodeFound || node === nodeToFind) {
         this.nodeFound = true;
@@ -343,7 +344,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
   private moveCaretToNextLine() {
     this.lineNumber++;
     this.lineOffset = 1;
-    this.caretPos = this.lineNumber + ':' + this.lineOffset;
+    this.caretPos = `${this.lineNumber}:${this.lineOffset}`;
   }
 
   private extractPlaintext(line: string) {
@@ -383,8 +384,8 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
 
   private splitLine(offset: number, line: string): string[] {
     const plaintext = this.replaceHtmlEntities(this.extractPlaintext(line));
-    console.log('split at ' +  offset + ' (formatted): ' + line);
-    console.log('split at ' +  offset + ' (plain): ' + plaintext);
+    console.log(`split at ${offset} (formatted): ${line}`);
+    console.log(`split at ${offset} (plain): ${plaintext}`);
     if (line === '<br></div>') {
       return ['<div class="line"><br></div>', '<div class="line"><br></div>'];
     }
