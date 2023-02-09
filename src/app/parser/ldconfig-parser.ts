@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import LDConfig from '../../assets/ldconfig.ldr.json';
+
 @Injectable()
 export class LDConfigParser {
 
@@ -8,8 +10,7 @@ export class LDConfigParser {
   }
 
   public parseIncludedLDConfig() {
-    const url = 'assets/ldconfig.ldr';
-    this.downloadLDConfigFile(url);
+    this.parseLDConfigFile(LDConfig.ldconfig);
   }
 
   public parseLDConfigFromLDrawOrg() {
