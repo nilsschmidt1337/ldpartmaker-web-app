@@ -1,7 +1,6 @@
 import {
   AfterViewInit,
   Component,
-  ComponentFactoryResolver,
   Input,
   OnInit,
   ViewChild,
@@ -46,7 +45,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
   private readonly INSERT_PARAGRAPH = 'insertParagraph';
   private readonly NONE = '';
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver, private parser: LDrawParser) {}
+  constructor(private parser: LDrawParser) {}
 
   ngOnInit(): void {
   }
@@ -72,8 +71,7 @@ export class TextEditorComponent implements OnInit, AfterViewInit {
 
   onClose() {
     this.shown = false;
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(TextEditorComponent);
-    const newComponent = this.parentComponent.viewContainerRef.createComponent(componentFactory);
+    const newComponent = this.parentComponent.viewContainerRef.createComponent(TextEditorComponent);
     newComponent.instance.parentComponent = this.parentComponent;
     newComponent.instance.bounds = this.bounds;
     newComponent.instance.shown = true;
