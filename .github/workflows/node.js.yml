@@ -1,4 +1,4 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across versions 12.x of node
+# This workflow will do a clean install of node dependencies, build the source code and run tests across versions 16.x of node
 # It uses a cache to perform a faster build.
 
 # In the future, I will add an automated release process whenever a tag was pushed
@@ -33,10 +33,17 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+# Install Angular CLI
+    - run: npm install -g @angular/cli@15.0.2
+# Build, test and lint
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
     - run: npm run lint
-
-# In the future: create a production build
-# ng build --prod --base-href ./
+# Create a production build
+    - run: sh build.sh
+    - name: Archive production build
+      uses: actions/upload-artifact@v3
+      with:
+        name: ldpartmaker-web-app
+        path: dist
