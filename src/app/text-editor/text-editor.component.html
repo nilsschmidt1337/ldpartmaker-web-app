@@ -18,8 +18,9 @@
     <mat-icon>close</mat-icon>
   </button>
 
-  <mat-slider min="1" max="100" step="1" value="1"></mat-slider>
-
+  <mat-slider min="1" max="100" step="1" value="1">
+    <input matSliderThumb>
+  </mat-slider>
 
   <div #sourceEditor [innerHTML]="initialSource" class="content" [contentEditable]="true"
        (input)="onInputEvent($event)"
